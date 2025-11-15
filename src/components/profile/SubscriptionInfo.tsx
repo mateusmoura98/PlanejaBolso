@@ -63,11 +63,12 @@ export function SubscriptionInfo() {
 
   const fetchSubscriptionInfo = async () => {
     try {
-      const response = await fetch('https://n8n.za9.com.br/webhook-test/assinatura/info', {
+      const credentials = btoa('planejabolso:130299moura');
+      const response = await fetch('https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/assinatura/info', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Basic bmluZWxhYnM6bmluZWxhYnMxMjMxMjM='
+          'Authorization': `Basic ${credentials}`
         },
         body: new URLSearchParams({
           subscription: assinaturaId!
