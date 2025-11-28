@@ -136,6 +136,7 @@ export type Database = {
       transacoes: {
         Row: {
           category_id: string
+          codigo: number | null
           created_at: string
           detalhes: string | null
           estabelecimento: string | null
@@ -147,6 +148,7 @@ export type Database = {
         }
         Insert: {
           category_id: string
+          codigo?: number | null
           created_at?: string
           detalhes?: string | null
           estabelecimento?: string | null
@@ -158,6 +160,7 @@ export type Database = {
         }
         Update: {
           category_id?: string
+          codigo?: number | null
           created_at?: string
           detalhes?: string | null
           estabelecimento?: string | null
