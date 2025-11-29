@@ -16,7 +16,7 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { UserProfile } from './UserProfile'
-import { useTheme } from '@/hooks/useTheme'
+import logo from '@/assets/planeja-bolso-logo.png'
 
 const items = [
   { title: 'Dashboard', url: '/dashboard', icon: Home },
@@ -31,46 +31,20 @@ export function AppSidebar() {
   const { state } = useSidebar()
   const location = useLocation()
   const { signOut } = useAuth()
-  const { theme } = useTheme()
   const currentPath = location.pathname
 
   const isActive = (path: string) => currentPath === path
   const isCollapsed = state === "collapsed"
 
-  // Determine which logo to use based on theme
-  const getLogoSrc = () => {
-    if (theme === 'dark') {
-      return '/lovable-uploads/bd48b065-36ce-4af8-926d-a1f05a2d43c5.png' // logo-black
-    } else if (theme === 'light') {
-      return '/lovable-uploads/b679a5ba-8a42-42cc-bc36-ccf4569fa05f.png' // logo-white
-    } else {
-      // System theme - check actual computed theme
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      return isDark 
-        ? '/lovable-uploads/bd48b065-36ce-4af8-926d-a1f05a2d43c5.png'
-        : '/lovable-uploads/b679a5ba-8a42-42cc-bc36-ccf4569fa05f.png'
-    }
-  }
-
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-center justify-center">
-          {isCollapsed ? (
-            <div className="min-w-8">
-              <img 
-                src="/lovable-uploads/a5a40de7-4096-4a32-af0c-76fe03ec72f7.png"
-                alt="FinanceFlow Icon" 
-                className="h-8 w-8"
-              />
-            </div>
-          ) : (
-            <img 
-              src={getLogoSrc()} 
-              alt="FinanceFlow" 
-              className="h-8 w-auto"
-            />
-          )}
+          <img 
+            src={logo} 
+            alt="Planeja Bolso" 
+            className={isCollapsed ? "h-8 w-8 object-contain" : "h-10 w-auto"}
+          />
         </div>
       </SidebarHeader>
 

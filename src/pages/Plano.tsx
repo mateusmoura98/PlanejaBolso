@@ -1,28 +1,12 @@
 
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
-import { useTheme } from '@/hooks/useTheme'
 import { Check } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import logo from '@/assets/planeja-bolso-logo.png'
 
 export default function Plano() {
-  const { theme } = useTheme()
   const navigate = useNavigate()
-
-  // Determine which logo to use based on theme
-  const getLogoSrc = () => {
-    if (theme === 'dark') {
-      return '/lovable-uploads/bd48b065-36ce-4af8-926d-a1f05a2d43c5.png' // logo-black
-    } else if (theme === 'light') {
-      return '/lovable-uploads/b679a5ba-8a42-42cc-bc36-ccf4569fa05f.png' // logo-white
-    } else {
-      // System theme - check actual computed theme
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      return isDark 
-        ? '/lovable-uploads/bd48b065-36ce-4af8-926d-a1f05a2d43c5.png'
-        : '/lovable-uploads/b679a5ba-8a42-42cc-bc36-ccf4569fa05f.png'
-    }
-  }
 
   const handleSubscribe = () => {
     window.open('https://sandbox.asaas.com/c/6jhf7jxup28v5a89', '_blank')
@@ -69,16 +53,16 @@ export default function Plano() {
         <div className="grid w-full min-w-[480px] mt-16 justify-center gap-4">
           <div>
             <img 
-              src={getLogoSrc()} 
-              alt="FinanceFlow" 
-              className="h-8 w-auto"
+              src={logo} 
+              alt="Planeja Bolso" 
+              className="h-12 w-auto"
             />
           </div>
           
           <div className="w-full lg:min-w-[470px] mx-auto">
             <div className="text-start py-8">
               <h1 className="text-2xl font-bold text-slate-800 mb-2 dark:text-slate-300">
-                Plano Agente Financeiro – R$14,90/mês
+                Planeja Bolso – R$14,90/mês
               </h1>
               <p className="text-lg text-muted-foreground mb-8">
                 Organize suas finanças de forma simples e inteligente!

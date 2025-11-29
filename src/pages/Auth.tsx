@@ -4,6 +4,7 @@ import { LoginForm } from '@/components/auth/LoginForm'
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { useTheme } from '@/hooks/useTheme'
+import logo from '@/assets/planeja-bolso-logo.png'
 
 type AuthMode = 'login' | 'forgot'
 
@@ -16,20 +17,6 @@ export default function Auth() {
   const [mode, setMode] = useState<AuthMode>('login')
   const { theme } = useTheme()
 
-  // Determine which logo to use based on theme
-  const getLogoSrc = () => {
-    if (theme === 'dark') {
-      return '/lovable-uploads/bd48b065-36ce-4af8-926d-a1f05a2d43c5.png' // logo-black
-    } else if (theme === 'light') {
-      return '/lovable-uploads/b679a5ba-8a42-42cc-bc36-ccf4569fa05f.png' // logo-white
-    } else {
-      // System theme - check actual computed theme
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      return isDark 
-        ? '/lovable-uploads/bd48b065-36ce-4af8-926d-a1f05a2d43c5.png'
-        : '/lovable-uploads/b679a5ba-8a42-42cc-bc36-ccf4569fa05f.png'
-    }
-  }
 
   return (
     <div className="h-screen flex bg-background p-6">
@@ -63,9 +50,9 @@ export default function Auth() {
         <div className="grid w-full min-w-[480px] mt-16 justify-center gap-4">
           <div>
             <img 
-              src={getLogoSrc()} 
-              alt="FinanceFlow" 
-              className="h-8 w-auto"
+              src={logo} 
+              alt="Planeja Bolso" 
+              className="h-12 w-auto"
             />
           </div>
           
