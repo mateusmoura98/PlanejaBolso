@@ -43,7 +43,7 @@ export function AppSidebar() {
           <img 
             src={logo} 
             alt="Planeja Bolso" 
-            className={isCollapsed ? "h-10 w-10 object-contain" : "h-14 w-auto"}
+            className={isCollapsed ? "h-12 w-12 object-contain" : "h-20 w-auto"}
           />
         </div>
       </SidebarHeader>
