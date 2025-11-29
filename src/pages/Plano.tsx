@@ -55,7 +55,7 @@ export default function Plano() {
             <img 
               src={logo} 
               alt="Planeja Bolso" 
-              className="h-16 w-auto mb-6"
+              className="h-24 w-auto mb-8"
             />
           </div>
           
