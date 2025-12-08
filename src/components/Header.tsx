@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Globe } from "lucide-react";
+import { Link } from "react-router-dom"; // <--- 1. Importei o Link aqui
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -69,9 +70,13 @@ const Header = () => {
 
           {/* Actions */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" size="sm">
-              Acessar conta
-            </Button>
+            {/* 2. ADICIONEI O LINK NO BOTÃO DE DESKTOP */}
+            <Link to="/auth">
+              <Button variant="ghost" size="sm">
+                Acessar conta
+              </Button>
+            </Link>
+            
             <button
               onClick={() => setLanguage(language === "PT" ? "EN" : "PT")}
               className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
@@ -117,9 +122,13 @@ const Header = () => {
             >
               FAQ
             </button>
-            <Button variant="ghost" size="sm" className="justify-start">
-              Acessar conta
-            </Button>
+            
+            {/* 3. ADICIONEI O LINK NO BOTÃO MOBILE */}
+            <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+              <Button variant="ghost" size="sm" className="justify-start">
+                Acessar conta
+              </Button>
+            </Link>
           </nav>
         )}
       </div>
