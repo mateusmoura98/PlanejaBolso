@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { LoginForm } from '@/components/auth/LoginForm'
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm'
@@ -8,52 +7,61 @@ import logo from '@/assets/planeja-bolso-logo.png'
 
 type AuthMode = 'login' | 'forgot'
 
+// CORRIGIDO: O nome agora bate com o arquivo que você subiu (.jpg.png)
 const authImages = {
-  login: '/lovable-uploads/7a9a766e-0b47-43d5-9605-b2ec2dcd0803.png',
-  forgot: '/lovable-uploads/7a9a766e-0b47-43d5-9605-b2ec2dcd0803.png'
+  login: '/familia-login.jpg.png', 
+  forgot: '/familia-login.jpg.png'
 }
 
 export default function Auth() {
   const [mode, setMode] = useState<AuthMode>('login')
   const { theme } = useTheme()
 
-
   return (
     <div className="h-screen flex bg-background p-6">
-      {/* Left side - Image */}
+      {/* Lado Esquerdo - Foto da Família */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden rounded-3xl">
         <img
           src={authImages[mode]}
-          alt="Finance Management"
-          className="w-full h-full object-cover"
+          alt="Família feliz usando o Planeja Bolso"
+          className="w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-primary/20" />
-        <div className="absolute bottom-8 left-8 text-white">
+        
+        {/* Filtro escuro para o texto aparecer bem */}
+        <div className="absolute inset-0 bg-black/20" /> 
+        
+        {/* TEXTO ORIGINAL MANTIDO */}
+        <div className="absolute bottom-8 left-8 text-white z-10">
           <div className="flex items-center gap-3 mb-4">
             <h2 className="text-3xl font-bold text-white">Agora ficou fácil!</h2>
           </div>
-          <p className="text-lg opacity-90">
+          <p className="text-lg opacity-90 font-medium">
             Gerencie suas finanças de forma simples e inteligente
           </p>
         </div>
       </div>
 
-      {/* Right side - Forms */}
+      {/* Lado Direito - Formulários */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative">
-        {/* Header with Logo and Theme Toggle */}
+        {/* Cabeçalho com Toggle de Tema */}
         <div className="absolute top-4 left-4 right-4 flex justify-end items-center">
-          
-          {/* Theme Toggle */}
           <ThemeToggle />
         </div>
 
-        <div className="grid w-full min-w-[480px] mt-16 justify-center gap-4">
-          <div>
+        <div className="grid w-full min-w-[320px] max-w-[480px] mt-8 justify-center gap-4">
+          <div className="flex justify-center">
             <img 
               src={logo} 
               alt="Planeja Bolso" 
-              className="h-24 w-auto mb-8"
+              className="h-24 w-auto mb-6"
             />
+          </div>
+          
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold tracking-tight">Bem-vindo de volta</h1>
+            <p className="text-muted-foreground mt-2">
+              Entre na sua conta para continuar
+            </p>
           </div>
           
           {mode === 'login' && (
