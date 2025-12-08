@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Users } from "lucide-react";
+import { Link } from "react-router-dom"; // <--- Adicionei este import
 
 const Hero = () => {
   return (
@@ -23,11 +24,13 @@ const Hero = () => {
               </p>
             </div>
 
-            {/* CTA */}
+            {/* CTA - Botão modificado para levar ao Login */}
             <div className="space-y-4">
-              <Button variant="cta" size="xl" className="w-full md:w-auto">
-                Experimente Planeja Bolso — 3 dias grátis!
-              </Button>
+              <Link to="/auth">
+                <Button variant="cta" size="xl" className="w-full md:w-auto">
+                  Experimente Planeja Bolso — 3 dias grátis!
+                </Button>
+              </Link>
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
