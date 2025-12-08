@@ -7,7 +7,7 @@ import logo from '@/assets/planeja-bolso-logo.png'
 
 type AuthMode = 'login' | 'forgot'
 
-// CORRIGIDO: O nome agora bate com o arquivo que você subiu (.jpg.png)
+// Mantendo o nome do arquivo conforme você subiu (com .jpg.png)
 const authImages = {
   login: '/familia-login.jpg.png', 
   forgot: '/familia-login.jpg.png'
@@ -30,7 +30,7 @@ export default function Auth() {
         {/* Filtro escuro para o texto aparecer bem */}
         <div className="absolute inset-0 bg-black/20" /> 
         
-        {/* TEXTO ORIGINAL MANTIDO */}
+        {/* Texto sobre a imagem */}
         <div className="absolute bottom-8 left-8 text-white z-10">
           <div className="flex items-center gap-3 mb-4">
             <h2 className="text-3xl font-bold text-white">Agora ficou fácil!</h2>
@@ -57,12 +57,7 @@ export default function Auth() {
             />
           </div>
           
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold tracking-tight">Bem-vindo de volta</h1>
-            <p className="text-muted-foreground mt-2">
-              Entre na sua conta para continuar
-            </p>
-          </div>
+          {/* REMOVI O TEXTO DUPLICADO QUE ESTAVA AQUI */}
           
           {mode === 'login' && (
             <LoginForm
