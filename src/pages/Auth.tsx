@@ -50,14 +50,13 @@ export default function Auth() {
 
         <div className="grid w-full min-w-[320px] max-w-[480px] mt-8 justify-center gap-4">
           <div className="flex justify-center">
+            {/* AQUI: Mudei para h-32 (Bem maior) */}
             <img 
               src={logo} 
               alt="Planeja Bolso" 
-              className="h-24 w-auto mb-6"
+              className="h-32 w-auto mb-6"
             />
           </div>
-          
-          {/* REMOVI O TEXTO DUPLICADO QUE ESTAVA AQUI */}
           
           {mode === 'login' && (
             <LoginForm
