@@ -39,11 +39,14 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center py-2">
+          {/* AQUI ESTÁ A MUDANÇA: */}
           <img 
             src={logo} 
             alt="Planeja Bolso" 
-            className={isCollapsed ? "h-12 w-12 object-contain" : "h-20 w-auto"}
+            // Se estiver fechado (collapsed): h-10 (pequeno)
+            // Se estiver aberto: w-48 (LARGURA GRANDE - 192px)
+            className={isCollapsed ? "h-10 w-10 object-contain" : "w-48 h-auto object-contain transition-all duration-300"}
           />
         </div>
       </SidebarHeader>
