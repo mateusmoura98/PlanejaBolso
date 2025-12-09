@@ -7,7 +7,7 @@
     /* Fundo Branco Puro */
     --background: 0 0% 100%;
     
-    /* Texto: Um tom de cinza muito escuro (quase preto) para leitura perfeita */
+    /* Texto: Preto Profundo para leitura nítida */
     --foreground: 222.2 84% 4.9%;
  
     /* CARD: Fundo branco */
@@ -18,37 +18,39 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    /* PRIMARY: O VERDE DA SUA LOGO (VIVO E FORTE) */
-    /* HSL: 142 (Verde), 76% (Saturação alta), 36% (Luminosidade média/escura) */
-    --primary: 142 76% 36%;
-    --primary-foreground: 355.7 100% 97.3%; /* Texto branco dentro do botão verde */
+    /* PRIMARY: O SEU VERDE EXATO (#007640) */
+    /* HSL: 153° (Matiz), 100% (Saturação), 23% (Luminosidade) */
+    --primary: 153 100% 23%;
+    --primary-foreground: 0 0% 100%; /* Texto branco puro dentro do botão */
  
-    /* SECONDARY: Um verde bem clarinho para detalhes suaves */
-    --secondary: 142 70% 96%;
-    --secondary-foreground: 142 76% 36%;
+    /* SECONDARY: Um verde bem suave derivado do seu, para fundos leves */
+    --secondary: 153 80% 96%;
+    --secondary-foreground: 153 100% 23%;
  
-    /* MUTED: Textos secundários (cinza médio, não muito apagado) */
+    /* MUTED: Cinza neutro para coisas menos importantes */
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
  
-    /* ACCENT: Cor de destaque ao passar o mouse */
-    --accent: 142 70% 96%;
-    --accent-foreground: 142 76% 36%;
+    /* ACCENT: Cor ao passar o mouse (um pouco mais claro que o oficial para dar efeito) */
+    --accent: 153 70% 90%;
+    --accent-foreground: 153 100% 23%;
  
-    /* DESTRUCTIVE: Vermelho para erros/botão apagar */
+    /* DESTRUCTIVE: Vermelho para erros */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
  
-    /* BORDAS E INPUTS */
+    /* BORDAS */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142 76% 36%; /* O anel de foco também fica verde */
+    
+    /* RING: O anel de foco com a sua cor */
+    --ring: 153 100% 23%;
  
     --radius: 0.5rem;
   }
  
   .dark {
-    /* MODO ESCURO (Caso ative no futuro) */
+    /* Modo Escuro (caso use no futuro) */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
  
@@ -58,8 +60,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
  
-    --primary: 142 70% 50%; /* Verde um pouco mais brilhante no modo escuro */
-    --primary-foreground: 355.7 100% 97.3%;
+    --primary: 153 100% 23%;
+    --primary-foreground: 0 0% 100%;
  
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -75,7 +77,7 @@
  
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 142 70% 50%;
+    --ring: 153 100% 23%;
   }
 }
  
