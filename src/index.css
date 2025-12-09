@@ -7,76 +7,67 @@
     /* Fundo Branco Puro */
     --background: 0 0% 100%;
     
-    /* Texto: Preto Profundo para leitura nítida */
-    --foreground: 222.2 84% 4.9%;
+    /* Texto: Preto Quase Puro (para leitura perfeita igual ao print) */
+    --foreground: 240 10% 3.9%;
  
-    /* CARD: Fundo branco */
+    /* CARD: Branco */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 3.9%;
  
-    /* POPOVER: Menus flutuantes */
+    /* POPOVER: Branco */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 3.9%;
  
-    /* PRIMARY: O SEU VERDE EXATO (#007640) */
-    /* HSL: 153° (Matiz), 100% (Saturação), 23% (Luminosidade) */
-    --primary: 153 100% 23%;
-    --primary-foreground: 0 0% 100%; /* Texto branco puro dentro do botão */
+    /* PRIMARY: VERDE SÓLIDO (#007640) */
+    /* Sem misturas, cor exata da logo */
+    --primary: 153 100% 23%; 
+    --primary-foreground: 0 0% 100%; /* Texto Branco Puro */
  
-    /* SECONDARY: Um verde bem suave derivado do seu, para fundos leves */
-    --secondary: 153 80% 96%;
-    --secondary-foreground: 153 100% 23%;
+    /* SECONDARY: Um cinza muito leve para botões secundários (não verde) */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
  
-    /* MUTED: Cinza neutro para coisas menos importantes */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* MUTED: Cinza para textos de apoio */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
  
-    /* ACCENT: Cor ao passar o mouse (um pouco mais claro que o oficial para dar efeito) */
-    --accent: 153 70% 90%;
-    --accent-foreground: 153 100% 23%;
+    /* ACCENT: Cor ao passar o mouse (Um verde levemente mais escuro) */
+    --accent: 153 100% 20%;
+    --accent-foreground: 0 0% 100%;
  
-    /* DESTRUCTIVE: Vermelho para erros */
+    /* DESTRUCTIVE: Vermelho */
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
  
-    /* BORDAS */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    
-    /* RING: O anel de foco com a sua cor */
+    /* BORDAS: Cinza suave */
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
     --ring: 153 100% 23%;
  
+    /* Raio da borda (levemente arredondado igual a imagem) */
     --radius: 0.5rem;
   }
  
   .dark {
-    /* Modo Escuro (caso use no futuro) */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
- 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
- 
+    /* Modo Escuro (Mantendo consistência se for usado) */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
     --primary: 153 100% 23%;
     --primary-foreground: 0 0% 100%;
- 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
- 
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
     --ring: 153 100% 23%;
   }
 }
