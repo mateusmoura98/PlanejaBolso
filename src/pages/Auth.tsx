@@ -7,7 +7,7 @@ import logo from '@/assets/planeja-bolso-logo.png'
 
 type AuthMode = 'login' | 'forgot'
 
-// Mantendo o nome do arquivo conforme você subiu (com .jpg.png)
+// Mantendo o nome do arquivo conforme você subiu
 const authImages = {
   login: '/familia-login.jpg.png', 
   forgot: '/familia-login.jpg.png'
@@ -27,10 +27,8 @@ export default function Auth() {
           className="w-full h-full object-cover object-center"
         />
         
-        {/* Filtro escuro para o texto aparecer bem */}
         <div className="absolute inset-0 bg-black/20" /> 
         
-        {/* Texto sobre a imagem */}
         <div className="absolute bottom-8 left-8 text-white z-10">
           <div className="flex items-center gap-3 mb-4">
             <h2 className="text-3xl font-bold text-white">Agora ficou fácil!</h2>
@@ -43,19 +41,22 @@ export default function Auth() {
 
       {/* Lado Direito - Formulários */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative">
-        {/* Cabeçalho com Toggle de Tema */}
         <div className="absolute top-4 left-4 right-4 flex justify-end items-center">
           <ThemeToggle />
         </div>
 
         <div className="grid w-full min-w-[320px] max-w-[480px] mt-8 justify-center gap-4">
           <div className="flex justify-center">
-            {/* AQUI: Mudei para h-32 (Bem maior) */}
+            
+            {/* --- MUDANÇA AQUI --- */}
+            {/* Tirei o h-32 e coloquei w-72 (largura fixa grande) */}
             <img 
               src={logo} 
               alt="Planeja Bolso" 
-              className="h-32 w-auto mb-6"
+              className="w-72 h-auto mb-6 object-contain"
             />
+            {/* ------------------- */}
+
           </div>
           
           {mode === 'login' && (
