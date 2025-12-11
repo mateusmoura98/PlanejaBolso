@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from '@/assets/planeja-bolso-logo.png'; // <--- Importando a logo
+import logo from '@/assets/planeja-bolso-logo.png';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -28,17 +28,17 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-md py-3" : "bg-white/95 backdrop-blur-sm py-4"
+        isScrolled ? "bg-white shadow-md py-2" : "bg-white/95 backdrop-blur-sm py-4"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          {/* --- LOGO NOVA AQUI --- */}
+          {/* LOGO GRANDE */}
           <div className="flex items-center gap-2">
             <img 
               src={logo} 
               alt="Planeja Bolso" 
-              className="h-12 w-auto object-contain" // Ajuste o h-12 se quiser maior
+              className="h-24 w-auto object-contain" 
             />
           </div>
 
