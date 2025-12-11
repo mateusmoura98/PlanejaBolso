@@ -9,12 +9,14 @@ const Footer = () => {
           {/* Logo & Copyright */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              {/* AQUI: Mudei para h-8 (Pequeno para rodapé) */}
+              
+              {/* AQUI ESTÁ A CORREÇÃO: Removi o filtro de cor */}
               <img 
                 src={logo} 
                 alt="Planeja Bolso" 
-                className="h-8 w-auto object-contain brightness-0 invert" 
+                className="h-10 w-auto object-contain" 
               />
+              
             </div>
             <p className="text-sm text-background/70">
               © 2025 Planeja Bolso. Todos os direitos reservados.
