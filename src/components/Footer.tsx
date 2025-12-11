@@ -1,5 +1,5 @@
 import { Phone, Mail, Instagram } from "lucide-react";
-import logo from '@/assets/planeja-bolso-logo.png'; // <--- Importando a logo
+import logo from '@/assets/planeja-bolso-logo.png';
 
 const Footer = () => {
   return (
@@ -9,13 +9,11 @@ const Footer = () => {
           {/* Logo & Copyright */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              {/* LOGO NOVA AQUI */}
+              {/* LOGO GRANDE BRANCA */}
               <img 
                 src={logo} 
                 alt="Planeja Bolso" 
-                // brightness-0 invert = Deixa a logo branca para o fundo escuro
-                // h-12 = Altura ajustada
-                className="h-12 w-auto object-contain brightness-0 invert" 
+                className="h-20 w-auto object-contain brightness-0 invert" 
               />
             </div>
             <p className="text-sm text-background/70">
