@@ -28,17 +28,19 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-md py-2" : "bg-white/95 backdrop-blur-sm py-4"
+        // MUDANÇA 1: Usei 'py-2' e 'py-1' para diminuir a altura da barra branca
+        isScrolled ? "bg-white shadow-md py-1" : "bg-white/95 backdrop-blur-sm py-2"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          {/* LOGO GRANDE */}
+          
+          {/* MUDANÇA 2: Aumentei a logo para h-28, mas com a barra mais fina */}
           <div className="flex items-center gap-2">
             <img 
               src={logo} 
               alt="Planeja Bolso" 
-              className="h-24 w-auto object-contain" 
+              className="h-28 w-auto object-contain" 
             />
           </div>
 
