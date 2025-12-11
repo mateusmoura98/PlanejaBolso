@@ -9,14 +9,12 @@ const Footer = () => {
           {/* Logo & Copyright */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              
-              {/* AQUI ESTÁ A CORREÇÃO: Removi o filtro de cor */}
+              {/* LOGO COM FILTRO BRANCO (brightness-0 invert) */}
               <img 
                 src={logo} 
                 alt="Planeja Bolso" 
-                className="h-10 w-auto object-contain" 
+                className="h-10 w-auto object-contain brightness-0 invert" 
               />
-              
             </div>
             <p className="text-sm text-background/70">
               © 2025 Planeja Bolso. Todos os direitos reservados.
@@ -27,15 +25,26 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Contato</h3>
             <div className="space-y-3 text-sm">
-              <a href="tel:+5511999999999" className="flex items-center gap-2 text-background/70 hover:text-background transition-colors">
+              <a
+                href="tel:+5511999999999"
+                className="flex items-center gap-2 text-background/70 hover:text-background transition-colors"
+              >
                 <Phone className="w-4 h-4" />
                 <span>(11) 99999-9999</span>
               </a>
-              <a href="mailto:contato@planejabolso.com.br" className="flex items-center gap-2 text-background/70 hover:text-background transition-colors">
+              <a
+                href="mailto:contato@planejabolso.com.br"
+                className="flex items-center gap-2 text-background/70 hover:text-background transition-colors"
+              >
                 <Mail className="w-4 h-4" />
                 <span>contato@planejabolso.com.br</span>
               </a>
-              <a href="https://instagram.com/planejabolso" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-background/70 hover:text-background transition-colors">
+              <a
+                href="https://instagram.com/planejabolso"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-background/70 hover:text-background transition-colors"
+              >
                 <Instagram className="w-4 h-4" />
                 <span>@planejabolso</span>
               </a>
@@ -46,16 +55,36 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Links Úteis</h3>
             <div className="space-y-3 text-sm">
-              <a href="#" className="block text-background/70 hover:text-background transition-colors">Termos de Uso</a>
-              <a href="#" className="block text-background/70 hover:text-background transition-colors">Política de Privacidade</a>
-              <a href="#" className="block text-background/70 hover:text-background transition-colors">Política de Cookies</a>
+              <a
+                href="#"
+                className="block text-background/70 hover:text-background transition-colors"
+              >
+                Termos de Uso
+              </a>
+              <a
+                href="#"
+                className="block text-background/70 hover:text-background transition-colors"
+              >
+                Política de Privacidade
+              </a>
+              <a
+                href="#"
+                className="block text-background/70 hover:text-background transition-colors"
+              >
+                Política de Cookies
+              </a>
             </div>
           </div>
         </div>
 
+        {/* Payment Security */}
         <div className="pt-8 border-t border-background/10 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-background/70">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
             </svg>
             <span>Pagamentos seguros via Stripe</span>
