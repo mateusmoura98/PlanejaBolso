@@ -28,23 +28,21 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        // MUDANÇA 1: Usei 'py-2' e 'py-1' para diminuir a altura da barra branca
-        isScrolled ? "bg-white shadow-md py-1" : "bg-white/95 backdrop-blur-sm py-2"
+        isScrolled ? "bg-white shadow-md py-3" : "bg-white/95 backdrop-blur-sm py-4"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           
-          {/* MUDANÇA 2: Aumentei a logo para h-28, mas com a barra mais fina */}
+          {/* AQUI: Mudei para h-10 (Bem menor e elegante) */}
           <div className="flex items-center gap-2">
             <img 
               src={logo} 
               alt="Planeja Bolso" 
-              className="h-28 w-auto object-contain" 
+              className="h-10 w-auto object-contain" 
             />
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <button onClick={() => scrollToSection("funcionalidades")} className="text-foreground hover:text-primary transition-colors font-medium">Funcionalidades</button>
             <button onClick={() => scrollToSection("como-funciona")} className="text-foreground hover:text-primary transition-colors font-medium">Como funciona</button>
@@ -52,7 +50,6 @@ const Header = () => {
             <button onClick={() => scrollToSection("faq")} className="text-foreground hover:text-primary transition-colors font-medium">FAQ</button>
           </nav>
 
-          {/* Actions */}
           <div className="hidden md:flex items-center gap-4">
             <Link to="/auth">
               <Button variant="ghost" size="sm">Acessar conta</Button>
@@ -63,13 +60,11 @@ const Header = () => {
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden text-foreground">
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 flex flex-col gap-4">
             <button onClick={() => scrollToSection("funcionalidades")} className="text-foreground hover:text-primary transition-colors font-medium text-left">Funcionalidades</button>
