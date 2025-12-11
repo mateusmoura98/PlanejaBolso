@@ -1,4 +1,5 @@
 import { Phone, Mail, Instagram } from "lucide-react";
+import logo from '@/assets/planeja-bolso-logo.png'; // <--- Importando a logo
 
 const Footer = () => {
   return (
@@ -8,10 +9,14 @@ const Footer = () => {
           {/* Logo & Copyright */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-bold text-lg">
-                PB
-              </div>
-              <span className="text-xl font-bold">Planeja Bolso</span>
+              {/* LOGO NOVA AQUI */}
+              <img 
+                src={logo} 
+                alt="Planeja Bolso" 
+                // brightness-0 invert = Deixa a logo branca para o fundo escuro
+                // h-12 = Altura ajustada
+                className="h-12 w-auto object-contain brightness-0 invert" 
+              />
             </div>
             <p className="text-sm text-background/70">
               © 2025 Planeja Bolso. Todos os direitos reservados.
