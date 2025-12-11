@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Globe } from "lucide-react";
-import { Link } from "react-router-dom"; // <--- 1. Importei o Link aqui
+import { Link } from "react-router-dom";
+import logo from '@/assets/planeja-bolso-logo.png'; // <--- Importando a logo
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,65 +33,36 @@ const Header = () => {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* --- LOGO NOVA AQUI --- */}
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-bold text-lg">
-              PB
-            </div>
-            <span className="text-xl font-bold text-foreground">Planeja Bolso</span>
+            <img 
+              src={logo} 
+              alt="Planeja Bolso" 
+              className="h-12 w-auto object-contain" // Ajuste o h-12 se quiser maior
+            />
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <button
-              onClick={() => scrollToSection("funcionalidades")}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Funcionalidades
-            </button>
-            <button
-              onClick={() => scrollToSection("como-funciona")}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Como funciona
-            </button>
-            <button
-              onClick={() => scrollToSection("planos")}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Planos
-            </button>
-            <button
-              onClick={() => scrollToSection("faq")}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              FAQ
-            </button>
+            <button onClick={() => scrollToSection("funcionalidades")} className="text-foreground hover:text-primary transition-colors font-medium">Funcionalidades</button>
+            <button onClick={() => scrollToSection("como-funciona")} className="text-foreground hover:text-primary transition-colors font-medium">Como funciona</button>
+            <button onClick={() => scrollToSection("planos")} className="text-foreground hover:text-primary transition-colors font-medium">Planos</button>
+            <button onClick={() => scrollToSection("faq")} className="text-foreground hover:text-primary transition-colors font-medium">FAQ</button>
           </nav>
 
           {/* Actions */}
           <div className="hidden md:flex items-center gap-4">
-            {/* 2. ADICIONEI O LINK NO BOTÃO DE DESKTOP */}
             <Link to="/auth">
-              <Button variant="ghost" size="sm">
-                Acessar conta
-              </Button>
+              <Button variant="ghost" size="sm">Acessar conta</Button>
             </Link>
-            
-            <button
-              onClick={() => setLanguage(language === "PT" ? "EN" : "PT")}
-              className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-            >
+            <button onClick={() => setLanguage(language === "PT" ? "EN" : "PT")} className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors">
               <Globe className="w-4 h-4" />
               <span className="text-sm font-medium">{language}</span>
             </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-foreground"
-          >
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden text-foreground">
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -98,36 +70,12 @@ const Header = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 flex flex-col gap-4">
-            <button
-              onClick={() => scrollToSection("funcionalidades")}
-              className="text-foreground hover:text-primary transition-colors font-medium text-left"
-            >
-              Funcionalidades
-            </button>
-            <button
-              onClick={() => scrollToSection("como-funciona")}
-              className="text-foreground hover:text-primary transition-colors font-medium text-left"
-            >
-              Como funciona
-            </button>
-            <button
-              onClick={() => scrollToSection("planos")}
-              className="text-foreground hover:text-primary transition-colors font-medium text-left"
-            >
-              Planos
-            </button>
-            <button
-              onClick={() => scrollToSection("faq")}
-              className="text-foreground hover:text-primary transition-colors font-medium text-left"
-            >
-              FAQ
-            </button>
-            
-            {/* 3. ADICIONEI O LINK NO BOTÃO MOBILE */}
+            <button onClick={() => scrollToSection("funcionalidades")} className="text-foreground hover:text-primary transition-colors font-medium text-left">Funcionalidades</button>
+            <button onClick={() => scrollToSection("como-funciona")} className="text-foreground hover:text-primary transition-colors font-medium text-left">Como funciona</button>
+            <button onClick={() => scrollToSection("planos")} className="text-foreground hover:text-primary transition-colors font-medium text-left">Planos</button>
+            <button onClick={() => scrollToSection("faq")} className="text-foreground hover:text-primary transition-colors font-medium text-left">FAQ</button>
             <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-              <Button variant="ghost" size="sm" className="justify-start">
-                Acessar conta
-              </Button>
+              <Button variant="ghost" size="sm" className="justify-start">Acessar conta</Button>
             </Link>
           </nav>
         )}
