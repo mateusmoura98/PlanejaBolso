@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Users } from "lucide-react";
+import { CheckCircle2, User } from "lucide-react"; // Importei o ícone 'User'
 import { Link } from "react-router-dom";
 
 const Hero = () => {
@@ -11,19 +11,27 @@ const Hero = () => {
           {/* LADO ESQUERDO */}
           <div className="space-y-8 text-left">
             
-            {/* TÍTULO COM LETRA GROSSA (font-extrabold) */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.1]">
               Gestão financeira simplificada com{" "}
               <span className="text-primary">WhatsApp</span> e{" "}
               <span className="text-primary">Inteligência Artificial</span>
             </h1>
 
-            {/* Prova Social */}
+            {/* Prova Social (CORRIGIDO COM ÍCONES DE USUÁRIO) */}
             <div className="flex items-start gap-3 p-4 bg-white rounded-xl shadow-sm border border-gray-100 w-fit">
               <div className="flex -space-x-2">
-                 <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-bold text-gray-500">U</div>
-                 <div className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center text-xs font-bold text-gray-500">U</div>
-                 <div className="w-8 h-8 rounded-full bg-gray-400 border-2 border-white flex items-center justify-center text-xs font-bold text-gray-500">U</div>
+                 {/* Ícone 1 */}
+                 <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center">
+                    <User className="w-4 h-4 text-gray-500" />
+                 </div>
+                 {/* Ícone 2 */}
+                 <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center">
+                    <User className="w-4 h-4 text-gray-600" />
+                 </div>
+                 {/* Ícone 3 */}
+                 <div className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center">
+                    <User className="w-4 h-4 text-gray-700" />
+                 </div>
               </div>
               <p className="text-sm text-muted-foreground font-medium mt-1">
                 <span className="font-bold text-foreground">+28 mil pessoas</span> confiam no Planeja Bolso.
