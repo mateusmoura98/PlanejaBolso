@@ -12,9 +12,11 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-white">
+    // AQUI: w-full e overflow-x-hidden garantem que nada ultrapasse a largura da tela
+    <div className="min-h-screen bg-white w-full overflow-x-hidden relative">
       <Header />
-      <main>
+      
+      <main className="w-full flex flex-col">
         <Hero />
         <VideoSection />
         <Benefits />
@@ -25,6 +27,7 @@ const Index = () => {
         <Pricing />
         <FAQ />
       </main>
+      
       <Footer />
     </div>
   );
