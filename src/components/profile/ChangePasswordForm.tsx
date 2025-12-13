@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -9,7 +8,7 @@ import { toast } from '@/hooks/use-toast'
 import { Lock } from 'lucide-react'
 
 export function ChangePasswordForm() {
-  const [currentPassword, setCurrentPassword] = useState('')
+  // Removi o estado da senha atual
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -39,29 +38,8 @@ export function ChangePasswordForm() {
     setLoading(true)
 
     try {
-      // Verificar senha atual fazendo login temporário
-      const { data: user } = await supabase.auth.getUser()
-      if (!user.user?.email) {
-        throw new Error('Usuário não encontrado')
-      }
-
-      // Tentar fazer login com a senha atual para verificar se está correta
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: user.user.email,
-        password: currentPassword,
-      })
-
-      if (signInError) {
-        toast({
-          title: "Erro",
-          description: "Senha atual incorreta",
-          variant: "destructive",
-        })
-        setLoading(false)
-        return
-      }
-
-      // Atualizar senha
+      // ATUALIZAÇÃO DIRETA (Sem verificar senha antiga)
+      // Como o usuário já está logado (pelo link do email), isso funciona direto.
       const { error } = await supabase.auth.updateUser({
         password: newPassword
       })
@@ -69,13 +47,12 @@ export function ChangePasswordForm() {
       if (error) throw error
 
       // Limpar formulário
-      setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
 
       toast({
         title: "Senha atualizada com sucesso!",
-        description: "Sua senha foi alterada com êxito",
+        description: "Sua senha foi alterada com êxito. Use a nova senha no próximo login.",
       })
     } catch (error: any) {
       toast({
@@ -98,17 +75,8 @@ export function ChangePasswordForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="current-password">Senha atual</Label>
-            <Input
-              id="current-password"
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Digite sua senha atual"
-              required
-            />
-          </div>
+          
+          {/* REMOVI O CAMPO "SENHA ATUAL" DAQUI */}
 
           <div className="space-y-2">
             <Label htmlFor="new-password">Nova senha</Label>
