@@ -1,127 +1,130 @@
-
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/hooks/useAuth';
-import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
+import { toast } from '@/hooks/use-toast'
 
 export interface Category {
-  id: string;
-  nome: string;
-  tags: string | null;
-  created_at: string;
-  updated_at: string;
-  userid: string;
+  id: string
+  created_at: string
+  nome: string
+  userid: string | null
 }
 
 export function useCategories() {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
 
-  const { data: categories = [], isLoading, error } = useQuery({
+  const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories', user?.id],
     queryFn: async () => {
-      if (!user?.id) return [];
+      if (!user?.id) return []
       
+      // CORREÇÃO: Removemos .eq('userid', user.id)
+      // Agora ele respeita o RLS do banco e mostra categorias da família
       const { data, error } = await supabase
         .from('categorias')
         .select('*')
-        .eq('userid', user.id)
-        .order('nome');
+        .order('nome', { ascending: true })
 
       if (error) {
-        console.error('Erro ao buscar categorias:', error);
-        throw error;
+        toast({
+          title: "Erro ao carregar categorias",
+          description: error.message,
+          variant: "destructive",
+        })
+        throw error
       }
 
-      return data as Category[];
+      return data as Category[]
     },
     enabled: !!user?.id,
-  });
+  })
 
-  const createCategory = useMutation({
-    mutationFn: async (newCategory: { nome: string; tags?: string }) => {
-      if (!user?.id) throw new Error('Usuário não autenticado');
-
+  const addCategory = useMutation({
+    mutationFn: async (nome: string) => {
       const { data, error } = await supabase
         .from('categorias')
-        .insert([
-          {
-            nome: newCategory.nome,
-            tags: newCategory.tags || null,
-            userid: user.id,
-          },
-        ])
+        .insert([{ nome, userid: user?.id }])
         .select()
-        .single();
+        .single()
 
-      if (error) throw error;
-      return data;
+      if (error) throw error
+      return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success('Categoria criada com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+      toast({ title: "Categoria adicionada com sucesso!" })
     },
-    onError: (error) => {
-      console.error('Erro ao criar categoria:', error);
-      toast.error('Erro ao criar categoria');
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao adicionar categoria",
+        description: error.message,
+        variant: "destructive",
+      })
     },
-  });
+  })
 
   const updateCategory = useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: { nome: string; tags?: string } }) => {
+    mutationFn: async ({ id, nome }: { id: string; nome: string }) => {
       const { data, error } = await supabase
         .from('categorias')
-        .update({
-          nome: updates.nome,
-          tags: updates.tags || null,
-          updated_at: new Date().toISOString(),
-        })
+        .update({ nome })
         .eq('id', id)
         .select()
-        .single();
+        .single()
 
-      if (error) throw error;
-      return data;
+      if (error) throw error
+      return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success('Categoria atualizada com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+      toast({ title: "Categoria atualizada com sucesso!" })
     },
-    onError: (error) => {
-      console.error('Erro ao atualizar categoria:', error);
-      toast.error('Erro ao atualizar categoria');
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao atualizar categoria",
+        description: error.message,
+        variant: "destructive",
+      })
     },
-  });
+  })
 
   const deleteCategory = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from('categorias')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
 
-      if (error) throw error;
+      if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success('Categoria excluída com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+      toast({ title: "Categoria excluída com sucesso!" })
     },
-    onError: (error) => {
-      console.error('Erro ao excluir categoria:', error);
-      toast.error('Erro ao excluir categoria');
+    onError: (error: any) => {
+      // Tratamento especial para erro de chave estrangeira
+      if (error.code === '23503') {
+        toast({
+          title: "Não é possível excluir",
+          description: "Esta categoria está sendo usada em transações.",
+          variant: "destructive",
+        })
+      } else {
+        toast({
+          title: "Erro ao excluir categoria",
+          description: error.message,
+          variant: "destructive",
+        })
+      }
     },
-  });
+  })
 
   return {
     categories,
     isLoading,
-    error,
-    createCategory: createCategory.mutate,
-    updateCategory: updateCategory.mutate,
-    deleteCategory: deleteCategory.mutate,
-    isCreating: createCategory.isPending,
-    isUpdating: updateCategory.isPending,
-    isDeleting: deleteCategory.isPending,
-  };
+    addCategory,
+    updateCategory,
+    deleteCategory
+  }
 }
