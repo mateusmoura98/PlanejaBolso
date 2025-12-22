@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
@@ -51,7 +50,7 @@ export function useReports() {
             nome
           )
         `)
-        .eq('userid', user.id)
+        // CORREÇÃO: Removido .eq('userid', user.id) para permitir dados da família via RLS
 
       // Apply date filters
       if (filters.startDate) {
