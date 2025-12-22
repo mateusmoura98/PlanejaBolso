@@ -36,7 +36,7 @@ export default function Dashboard() {
   const { user } = useAuth()
   const [transacoes, setTransacoes] = useState<Transacao[]>([])
   const [lembretes, setLembretes] = useState<Lembrete[]>([])
-  const [loading, setLoading] = assim(true)
+  const [loading, setLoading] = useState(true)
   
   // Estados dos filtros
   const [filterMonth, setFilterMonth] = useState(new Date().getMonth().toString())
@@ -52,7 +52,8 @@ export default function Dashboard() {
     try {
       setLoading(true)
       
-      // Buscar transações (CORRIGIDO: Sem filtro de ID, o RLS do banco decide)
+      // Buscar transações
+      // CORREÇÃO: Removemos o .eq('userid') para permitir ver dados da família
       const { data: transacoesData, error: transacoesError } = await supabase
         .from('transacoes')
         .select(`
@@ -66,7 +67,8 @@ export default function Dashboard() {
 
       if (transacoesError) throw transacoesError
 
-      // Buscar lembretes (CORRIGIDO: Sem filtro de ID, o RLS do banco decide)
+      // Buscar lembretes
+      // CORREÇÃO: Removemos o .eq('userid') para permitir ver dados da família
       const { data: lembretesData, error: lembretesError } = await supabase
         .from('lembretes')
         .select('*')
@@ -77,6 +79,7 @@ export default function Dashboard() {
       setTransacoes(transacoesData || [])
       setLembretes(lembretesData || [])
     } catch (error: any) {
+      console.error("Erro no fetch:", error)
       toast({
         title: "Erro ao carregar dados",
         description: error.message,
