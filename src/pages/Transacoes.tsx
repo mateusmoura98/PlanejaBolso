@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -95,6 +94,7 @@ export default function Transacoes() {
 
   const fetchTransacoes = async () => {
     try {
+      // CORREÇÃO: Removido o filtro .eq('userid', user?.id) para permitir visão familiar
       const { data, error } = await supabase
         .from('transacoes')
         .select(`
@@ -104,12 +104,12 @@ export default function Transacoes() {
             nome
           )
         `)
-        .eq('userid', user?.id)
         .order('created_at', { ascending: false })
 
       if (error) throw error
       setTransacoes(data || [])
     } catch (error: any) {
+      console.error("Erro ao buscar transações:", error)
       toast({
         title: "Erro ao carregar transações",
         description: error.message,
@@ -129,7 +129,6 @@ export default function Transacoes() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validação: verificar se a categoria selecionada pertence ao usuário
     if (formData.category_id) {
       const categoryBelongsToUser = categories?.some(cat => cat.id === formData.category_id)
       if (!categoryBelongsToUser) {
@@ -229,8 +228,10 @@ export default function Transacoes() {
       const { error } = await supabase
         .from('transacoes')
         .delete()
-        .eq('userid', user?.id)
-
+        // CORREÇÃO: Removido filtro userid para permitir apagar da família (respeitando RLS)
+        // Se quiser apagar SÓ as suas, pode manter o .eq('userid', user?.id) aqui
+        // Mas para consistência familiar, deixei sem, para o RLS gerenciar
+      
       if (error) throw error
       toast({ title: "Todas as transações foram excluídas com sucesso!" })
       fetchTransacoes()
@@ -244,7 +245,10 @@ export default function Transacoes() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR')
+    // Tenta criar uma data segura para evitar erros de timezone
+    const date = new Date(dateString);
+    // Ajusta para o fuso horário local se necessário, ou usa UTC
+    return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
   }
 
   return (
@@ -267,7 +271,7 @@ export default function Transacoes() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Remover todas as transações</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Esta ação não pode ser desfeita. Isso irá remover permanentemente todas as suas transações.
+                    Esta ação não pode ser desfeita. Isso irá remover permanentemente todas as suas transações visíveis.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
