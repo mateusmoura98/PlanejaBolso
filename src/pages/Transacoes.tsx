@@ -94,7 +94,7 @@ export default function Transacoes() {
 
   const fetchTransacoes = async () => {
     try {
-      // CORREÇÃO: Removido o filtro .eq('userid', user?.id) para permitir visão familiar
+      // CORREÇÃO: Filtro de userid removido para permitir visão familiar
       const { data, error } = await supabase
         .from('transacoes')
         .select(`
@@ -109,7 +109,6 @@ export default function Transacoes() {
       if (error) throw error
       setTransacoes(data || [])
     } catch (error: any) {
-      console.error("Erro ao buscar transações:", error)
       toast({
         title: "Erro ao carregar transações",
         description: error.message,
@@ -228,9 +227,7 @@ export default function Transacoes() {
       const { error } = await supabase
         .from('transacoes')
         .delete()
-        // CORREÇÃO: Removido filtro userid para permitir apagar da família (respeitando RLS)
-        // Se quiser apagar SÓ as suas, pode manter o .eq('userid', user?.id) aqui
-        // Mas para consistência familiar, deixei sem, para o RLS gerenciar
+        // CORREÇÃO: Filtro userid removido. O RLS garante que só apague da família.
       
       if (error) throw error
       toast({ title: "Todas as transações foram excluídas com sucesso!" })
@@ -245,9 +242,7 @@ export default function Transacoes() {
   }
 
   const formatDate = (dateString: string) => {
-    // Tenta criar uma data segura para evitar erros de timezone
     const date = new Date(dateString);
-    // Ajusta para o fuso horário local se necessário, ou usa UTC
     return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
   }
 
