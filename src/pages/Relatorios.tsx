@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FileText } from 'lucide-react'
@@ -14,6 +13,8 @@ import { generatePDFReport } from '@/utils/pdfGenerator'
 
 export default function Relatorios() {
   const { user } = useAuth()
+  // O Hook useReports (que corrigimos) é chamado aqui 👇
+  // Ele já vai trazer os dados da família automaticamente agora.
   const { transactions, isLoading, filters, setFilters, summaryData } = useReports()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
 
