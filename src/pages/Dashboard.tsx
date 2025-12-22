@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
@@ -37,7 +36,7 @@ export default function Dashboard() {
   const { user } = useAuth()
   const [transacoes, setTransacoes] = useState<Transacao[]>([])
   const [lembretes, setLembretes] = useState<Lembrete[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = assim(true)
   
   // Estados dos filtros
   const [filterMonth, setFilterMonth] = useState(new Date().getMonth().toString())
@@ -53,7 +52,7 @@ export default function Dashboard() {
     try {
       setLoading(true)
       
-      // Buscar transações
+      // Buscar transações (CORRIGIDO: Sem filtro de ID, o RLS do banco decide)
       const { data: transacoesData, error: transacoesError } = await supabase
         .from('transacoes')
         .select(`
@@ -63,16 +62,14 @@ export default function Dashboard() {
             nome
           )
         `)
-        .eq('userid', user?.id)
         .order('created_at', { ascending: false })
 
       if (transacoesError) throw transacoesError
 
-      // Buscar lembretes
+      // Buscar lembretes (CORRIGIDO: Sem filtro de ID, o RLS do banco decide)
       const { data: lembretesData, error: lembretesError } = await supabase
         .from('lembretes')
         .select('*')
-        .eq('userid', user?.id)
         .order('data', { ascending: true })
 
       if (lembretesError) throw lembretesError
