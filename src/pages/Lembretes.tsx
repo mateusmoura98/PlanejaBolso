@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -41,10 +41,10 @@ export default function Lembretes() {
 
   const fetchLembretes = async () => {
     try {
+      // CORREÇÃO: Removido filtro userid para permitir visão familiar
       const { data, error } = await supabase
         .from('lembretes')
         .select('*')
-        .eq('userid', user?.id)
         .order('data', { ascending: true })
 
       if (error) throw error
@@ -141,8 +141,8 @@ export default function Lembretes() {
       const { error } = await supabase
         .from('lembretes')
         .delete()
-        .eq('userid', user?.id)
-
+        // CORREÇÃO: Filtro userid removido para permitir apagar da família (controlado pelo RLS)
+        
       if (error) throw error
       toast({ title: "Todos os lembretes foram excluídos com sucesso!" })
       fetchLembretes()
@@ -163,7 +163,7 @@ export default function Lembretes() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR')
+    return new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
   }
 
   const isOverdue = (dateString: string) => {
