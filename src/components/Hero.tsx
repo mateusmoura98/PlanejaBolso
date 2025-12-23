@@ -60,8 +60,8 @@ const Hero = () => {
                 <div className="w-3 h-3 rounded-full bg-green-400" />
               </div>
               
-              {/* AQUI ENTRA O SEU PRINT */}
-              <div className="overflow-hidden rounded-b-xl bg-gray-50 aspect-[4/3]">
+              {/* AQUI A ALTERAÇÃO: Formato 9:16 (Vertical / Celular em pé) */}
+              <div className="overflow-hidden rounded-b-xl bg-gray-50 aspect-[9/16]">
                 <img 
                   src={dashboardPreview} 
                   alt="Dashboard Planeja Bolso" 
