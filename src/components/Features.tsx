@@ -3,22 +3,22 @@ import { PieChart, Users, CreditCard } from "lucide-react";
 const features = [
   {
     icon: PieChart,
-    title: "Gastos e receitas organizados",
+    title: "Gastos e receitas organizados por categoria e subcategoria",
     description: "Identifique automaticamente suas despesas e receitas com inteligência artificial."
   },
   {
     icon: Users,
-    title: "Perfeito para casais e famílias",
-    description: "Controle as finanças de múltiplos usuários em um só lugar de forma simples."
+    title: "Mapeie quem está gastando: perfeito para casal, família ou empresa",
+    description: "Controle as finanças de múltiplos usuários em um só lugar."
   },
   {
     icon: CreditCard,
-    title: "Controle total de contas",
-    description: "Acompanhe contas bancárias e cartões de crédito com lembretes automáticos."
+    title: "Controle conta bancária, cartão de crédito, e receba lembretes",
+    description: "Acompanhe contas a pagar e a receber com lembretes inteligentes."
   }
 ];
 
-// Caminho do vídeo que já está na pasta public
+// O Vídeo que você quer usar
 const videoPath = "/video-planeja.mp4";
 
 const Features = () => {
@@ -26,43 +26,20 @@ const Features = () => {
     <section className="py-16 md:py-24 bg-white overflow-hidden">
       <div className="container mx-auto px-4 max-w-6xl">
         
+        {/* --- TÍTULO CENTRALIZADO (Como na sua foto) --- */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground leading-tight mb-4">
+            Saiba para onde seu dinheiro está indo
+          </h2>
+          <p className="text-lg text-muted-foreground">
+            Identificação automática de categorias e subcategorias usando inteligência artificial.
+          </p>
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* --- LADO ESQUERDO: TEXTOS --- */}
-          <div className="order-1 lg:order-1 flex flex-col items-center lg:items-start space-y-8">
-            
-            {/* Cabeçalho do Texto */}
-            <div className="text-center lg:text-left space-y-4 max-w-lg">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
-                Saiba para onde seu dinheiro está indo
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Identificação automática de categorias e subcategorias usando inteligência artificial.
-              </p>
-            </div>
-
-            {/* Lista de Funcionalidades */}
-            <div className="space-y-6 w-full max-w-md lg:max-w-full">
-              {features.map((feature, index) => (
-                <div 
-                  key={index} 
-                  className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left p-4 rounded-xl hover:bg-gray-50 transition-colors"
-                >
-                  <div className="shrink-0 w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-primary shadow-sm">
-                    <feature.icon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-foreground mb-1 text-lg">{feature.title}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-
-          {/* --- LADO DIREITO: O VÍDEO NO CELULAR (Substituindo o Gráfico) --- */}
-          <div className="order-2 lg:order-2 flex justify-center w-full mt-8 lg:mt-0">
+          {/* --- LADO ESQUERDO: O VÍDEO (Substituindo o gráfico verde) --- */}
+          <div className="flex justify-center">
             <div className="relative w-full max-w-[280px] md:max-w-[300px]">
               
               {/* Efeito de brilho atrás */}
@@ -91,6 +68,26 @@ const Features = () => {
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-20 pointer-events-none" />
               </div>
             </div>
+          </div>
+
+          {/* --- LADO DIREITO: LISTA DE CARDS (Mantive igual) --- */}
+          <div className="space-y-6">
+            {features.map((feature, index) => (
+              <div 
+                key={index} 
+                className="flex gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:border-primary/20 group"
+              >
+                <div className="shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                    <feature.icon className="w-6 h-6" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-foreground mb-1">{feature.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
 
         </div>
