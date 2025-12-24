@@ -18,7 +18,7 @@ const features = [
   }
 ];
 
-// O caminho do seu vídeo
+// Caminho do vídeo que já está na pasta public
 const videoPath = "/video-planeja.mp4";
 
 const Features = () => {
@@ -28,41 +28,8 @@ const Features = () => {
         
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* --- LADO ESQUERDO: O VÍDEO (Centralizado no Mobile) --- */}
-          {/* order-1 garante que no celular o vídeo aparece primeiro ou ajuste conforme preferir */}
-          <div className="order-1 lg:order-1 flex justify-center w-full">
-            <div className="relative w-full max-w-[280px] md:max-w-[300px]">
-              
-              {/* Efeito de brilho atrás */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 rounded-full blur-[80px] -z-10" />
-
-              {/* MOLDURA DO CELULAR */}
-              <div className="relative z-10 bg-black rounded-[2.5rem] p-3 shadow-2xl border-4 border-gray-900 ring-1 ring-white/10">
-                
-                {/* Tela do Vídeo */}
-                <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
-                  <video
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                  >
-                    <source src={videoPath} type="video/mp4" />
-                  </video>
-                  
-                  {/* Sombra interna leve */}
-                  <div className="absolute inset-0 ring-1 ring-black/5 rounded-[2rem] pointer-events-none" />
-                </div>
-                
-                {/* Detalhe da câmera (Notch) */}
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-20 pointer-events-none" />
-              </div>
-            </div>
-          </div>
-
-          {/* --- LADO DIREITO: TEXTOS (Centralizados no Mobile) --- */}
-          <div className="order-2 lg:order-2 flex flex-col items-center lg:items-start space-y-8">
+          {/* --- LADO ESQUERDO: TEXTOS --- */}
+          <div className="order-1 lg:order-1 flex flex-col items-center lg:items-start space-y-8">
             
             {/* Cabeçalho do Texto */}
             <div className="text-center lg:text-left space-y-4 max-w-lg">
@@ -92,6 +59,38 @@ const Features = () => {
               ))}
             </div>
 
+          </div>
+
+          {/* --- LADO DIREITO: O VÍDEO NO CELULAR (Substituindo o Gráfico) --- */}
+          <div className="order-2 lg:order-2 flex justify-center w-full mt-8 lg:mt-0">
+            <div className="relative w-full max-w-[280px] md:max-w-[300px]">
+              
+              {/* Efeito de brilho atrás */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 rounded-full blur-[80px] -z-10" />
+
+              {/* MOLDURA DO CELULAR */}
+              <div className="relative z-10 bg-black rounded-[2.5rem] p-3 shadow-2xl border-4 border-gray-900 ring-1 ring-white/10">
+                
+                {/* Tela do Vídeo */}
+                <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
+                  <video
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  >
+                    <source src={videoPath} type="video/mp4" />
+                  </video>
+                  
+                  {/* Sombra interna leve */}
+                  <div className="absolute inset-0 ring-1 ring-black/5 rounded-[2rem] pointer-events-none" />
+                </div>
+                
+                {/* Detalhe da câmera (Notch) */}
+                <div className="absolute top-6 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-20 pointer-events-none" />
+              </div>
+            </div>
           </div>
 
         </div>
