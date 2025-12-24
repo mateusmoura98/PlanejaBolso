@@ -9,10 +9,9 @@ const Hero = () => {
         
         <div className="space-y-8 flex flex-col items-center">
           
-          {/* TÍTULO - CORRIGIDO */}
+          {/* TÍTULO CORRIGIDO AQUI EMBAIXO */}
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
             Gestão financeira simplificada com{" "}
-            {/* Agora a frase inteira fica verde */}
             <span className="text-primary">WhatsApp e Inteligência Artificial</span>
           </h1>
 
@@ -25,10 +24,9 @@ const Hero = () => {
             </p>
           </div>
 
-          {/* BOTÃO E CHAMADA (CTA) */}
+          {/* BOTÃO */}
           <div className="space-y-6 w-full flex flex-col items-center">
             <Link to="/auth">
-              {/* Botão Arredondado (rounded-full) e Verde Sólido */}
               <Button 
                 size="xl" 
                 className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
