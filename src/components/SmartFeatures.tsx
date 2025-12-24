@@ -23,7 +23,7 @@ const features = [
   },
 ];
 
-// VÍDEO DO TOPO: DEMO (COM SOM)
+// VÍDEO COM SOM (DEMO)
 const videoPath = "/video-demo.mp4"; 
 
 const SmartFeatures = () => {
@@ -61,12 +61,12 @@ const SmartFeatures = () => {
             ))}
           </div>
 
-          {/* --- LADO DIREITO (VÍDEO COM SOM E FRASE) --- */}
+          {/* --- LADO DIREITO (VÍDEO COM SOM + FRASE NOVA) --- */}
           <div className="order-1 md:order-2 flex flex-col items-center justify-center">
             
-            {/* FRASE SOLICITADA */}
+            {/* FRASE NOVA */}
             <h3 className="text-xl md:text-2xl font-bold text-center mb-8 text-foreground max-w-xs leading-tight">
-              Conheça o Planeja Bolso em menos de 1 minuto
+              Conheça o Planeja Bolso em 43 segundos
             </h3>
             
             <div className="relative w-full max-w-[280px] md:max-w-[300px]">
@@ -77,11 +77,11 @@ const SmartFeatures = () => {
               {/* MOLDURA DO CELULAR */}
               <div className="relative z-10 bg-black rounded-[2.5rem] p-3 shadow-2xl border-4 border-gray-900 ring-1 ring-white/10">
                 
-                {/* TELA COM O VÍDEO */}
+                {/* TELA COM O VÍDEO (COM CONTROLES) */}
                 <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
                   <video
                     className="w-full h-full object-cover"
-                    controls // COM SOM (Controles ativados)
+                    controls // Habilita o som
                     playsInline
                     preload="metadata"
                   >
