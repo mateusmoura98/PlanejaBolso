@@ -23,7 +23,7 @@ const features = [
   },
 ];
 
-// O vídeo do topo (Certifique-se que o nome do arquivo na pasta public é esse)
+// VÍDEO DO TOPO: DEMO (COM SOM)
 const videoPath = "/video-demo.mp4"; 
 
 const SmartFeatures = () => {
@@ -31,7 +31,6 @@ const SmartFeatures = () => {
     <section id="funcionalidades" className="py-24 bg-gray-50 overflow-hidden">
       <div className="container mx-auto px-4 max-w-6xl">
         
-        {/* Título da Seção */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground">
             Funcionalidades Inteligentes do Planeja Bolso
@@ -62,10 +61,14 @@ const SmartFeatures = () => {
             ))}
           </div>
 
-          {/* --- LADO DIREITO (VÍDEO 9:16) --- */}
-          <div className="order-1 md:order-2 flex justify-center">
+          {/* --- LADO DIREITO (VÍDEO COM SOM E FRASE) --- */}
+          <div className="order-1 md:order-2 flex flex-col items-center justify-center">
             
-            {/* Container do Celular */}
+            {/* FRASE SOLICITADA */}
+            <h3 className="text-xl md:text-2xl font-bold text-center mb-8 text-foreground max-w-xs leading-tight">
+              Conheça o Planeja Bolso em menos de 1 minuto
+            </h3>
+            
             <div className="relative w-full max-w-[280px] md:max-w-[300px]">
               
               {/* Efeito de brilho verde atrás */}
@@ -78,17 +81,13 @@ const SmartFeatures = () => {
                 <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
                   <video
                     className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
+                    controls // COM SOM (Controles ativados)
                     playsInline
+                    preload="metadata"
                   >
                     <source src={videoPath} type="video/mp4" />
                     Seu navegador não suporta vídeos.
                   </video>
-                  
-                  {/* Overlay sutil */}
-                  <div className="absolute inset-0 ring-1 ring-black/5 rounded-[2rem] pointer-events-none" />
                 </div>
 
                 {/* Detalhe da câmera (Notch) */}
