@@ -18,7 +18,7 @@ const features = [
   }
 ];
 
-// VÍDEO DE BAIXO: PLANEJA (MUDO)
+// VÍDEO DE BAIXO (MUDO)
 const videoPath = "/video-planeja.mp4";
 
 const Features = () => {
