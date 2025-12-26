@@ -18,7 +18,7 @@ const features = [
   }
 ];
 
-// O vídeo do APP (Planeja)
+// VÍDEO DO APP (PLANEJA)
 const videoPath = "/video-planeja.mp4";
 
 const Features = () => {
@@ -28,9 +28,9 @@ const Features = () => {
         
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* --- LADO ESQUERDO: O VÍDEO (Autoplay / Mudo) --- */}
+          {/* --- LADO ESQUERDO: VÍDEO (Autoplay / Mudo) --- */}
           <div className="order-1 lg:order-1 flex justify-center w-full">
-            <div className="relative w-full max-w-[260px] md:max-w-[300px]"> {/* Ajustado para 260px no mobile igual o de cima */}
+            <div className="relative w-full max-w-[260px] md:max-w-[300px]">
               
               {/* Efeito de brilho atrás */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 rounded-full blur-[80px] -z-10" />
@@ -42,10 +42,12 @@ const Features = () => {
                 <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
                   <video
                     className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
+                    autoPlay={true}
+                    muted={true}
+                    loop={true}
+                    playsInline={true}
+                    // O 'poster' é uma imagem que aparece se o vídeo for bloqueado pela bateria
+                    poster="/dashboard-preview.png" 
                   >
                     <source src={videoPath} type="video/mp4" />
                     Seu navegador não suporta vídeos.
