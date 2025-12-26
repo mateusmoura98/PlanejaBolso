@@ -1,6 +1,8 @@
 import { ShieldCheck, Zap, ThumbsUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
-// VÍDEO 1: A MOÇA (DEMO)
+// VÍDEO DA MOÇA (DEMO)
 const videoPath = "/video-demo.mp4"; 
 
 const SmartFeatures = () => {
@@ -10,8 +12,8 @@ const SmartFeatures = () => {
         
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* --- LADO ESQUERDO: TEXTOS E SELOS --- */}
-          <div className="order-2 lg:order-1 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
+          {/* --- 1. BLOCO DE TEXTO E SELOS (Agora fica em CIMA no celular) --- */}
+          <div className="order-1 lg:order-1 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
             
             <div className="space-y-4">
               <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight">
@@ -37,8 +39,10 @@ const SmartFeatures = () => {
 
           </div>
 
-          {/* --- LADO DIREITO: VÍDEO (COM SOM) --- */}
-          <div className="order-1 lg:order-2 flex justify-center w-full">
+          {/* --- 2. BLOCO DO VÍDEO E BOTÃO (Agora fica em BAIXO no celular) --- */}
+          <div className="order-2 lg:order-2 flex flex-col items-center w-full">
+            
+            {/* O CELULAR COM O VÍDEO */}
             <div className="relative w-full max-w-[280px] md:max-w-[300px]">
               
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 rounded-full blur-[80px] -z-10" />
@@ -47,7 +51,7 @@ const SmartFeatures = () => {
                 <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
                   <video
                     className="w-full h-full object-cover"
-                    controls // COM SOM
+                    controls 
                     playsInline
                     preload="metadata"
                   >
@@ -58,6 +62,19 @@ const SmartFeatures = () => {
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-20 pointer-events-none" />
               </div>
             </div>
+
+            {/* --- 3. O BOTÃO VERDE NOVO (Embaixo do vídeo) --- */}
+            <div className="mt-10 w-full flex justify-center">
+              <Link to="/auth">
+                <Button 
+                  size="xl" 
+                  className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+                >
+                  Experimente Planeja Bolso — 3 dias grátis!
+                </Button>
+              </Link>
+            </div>
+
           </div>
 
         </div>
