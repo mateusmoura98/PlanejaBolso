@@ -18,7 +18,7 @@ const features = [
   }
 ];
 
-// VÍDEO 2: O APP (PLANEJA)
+// O vídeo do APP (Planeja)
 const videoPath = "/video-planeja.mp4";
 
 const Features = () => {
@@ -28,13 +28,17 @@ const Features = () => {
         
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* --- LADO ESQUERDO: VÍDEO (SEM SOM / AUTOPLAY) --- */}
+          {/* --- LADO ESQUERDO: O VÍDEO (Autoplay / Mudo) --- */}
           <div className="order-1 lg:order-1 flex justify-center w-full">
-            <div className="relative w-full max-w-[280px] md:max-w-[300px]">
+            <div className="relative w-full max-w-[260px] md:max-w-[300px]"> {/* Ajustado para 260px no mobile igual o de cima */}
               
+              {/* Efeito de brilho atrás */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 rounded-full blur-[80px] -z-10" />
 
+              {/* MOLDURA DO CELULAR */}
               <div className="relative z-10 bg-black rounded-[2.5rem] p-3 shadow-2xl border-4 border-gray-900 ring-1 ring-white/10">
+                
+                {/* Tela do Vídeo */}
                 <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
                   <video
                     className="w-full h-full object-cover"
@@ -46,16 +50,19 @@ const Features = () => {
                     <source src={videoPath} type="video/mp4" />
                     Seu navegador não suporta vídeos.
                   </video>
+                  
                   {/* Sombra interna leve */}
                   <div className="absolute inset-0 ring-1 ring-black/5 rounded-[2rem] pointer-events-none" />
                 </div>
+                
+                {/* Detalhe da câmera (Notch) */}
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-20 pointer-events-none" />
               </div>
             </div>
           </div>
 
           {/* --- LADO DIREITO: TEXTOS --- */}
-          <div className="order-2 lg:order-2 space-y-8 mt-8 lg:mt-0">
+          <div className="order-2 lg:order-2 flex flex-col items-center lg:items-start space-y-8 mt-8 lg:mt-0">
             
             <div className="space-y-4 text-center lg:text-left">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
@@ -66,22 +73,23 @@ const Features = () => {
               </p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 w-full">
               {features.map((feature, index) => (
                 <div 
                   key={index} 
-                  className="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors"
+                  className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left p-4 rounded-xl hover:bg-gray-50 transition-colors"
                 >
-                  <div className="shrink-0 w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-primary">
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-primary shadow-sm">
                     <feature.icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-foreground mb-1">{feature.title}</h3>
+                    <h3 className="font-bold text-foreground mb-1 text-lg">{feature.title}</h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
               ))}
             </div>
+
           </div>
 
         </div>
