@@ -16,54 +16,78 @@ export type Database = {
     Tables: {
       categorias: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           nome: string
           tags: string | null
-          updated_at: string
+          updated_at: string | null
           userid: string
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           nome: string
           tags?: string | null
-          updated_at?: string
+          updated_at?: string | null
           userid: string
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           nome?: string
           tags?: string | null
-          updated_at?: string
+          updated_at?: string | null
           userid?: string
+        }
+        Relationships: []
+      }
+      familias: {
+        Row: {
+          codigo_convite: string | null
+          created_at: string | null
+          dono_id: string | null
+          id: string
+          nome: string
+        }
+        Insert: {
+          codigo_convite?: string | null
+          created_at?: string | null
+          dono_id?: string | null
+          id?: string
+          nome: string
+        }
+        Update: {
+          codigo_convite?: string | null
+          created_at?: string | null
+          dono_id?: string | null
+          id?: string
+          nome?: string
         }
         Relationships: []
       }
       lembretes: {
         Row: {
-          created_at: string
+          created_at: string | null
           data: string | null
-          descricao: string | null
+          descricao: string
           id: number
-          userid: string | null
+          userid: string
           valor: number | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           data?: string | null
-          descricao?: string | null
+          descricao: string
           id?: never
-          userid?: string | null
+          userid: string
           valor?: number | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           data?: string | null
-          descricao?: string | null
+          descricao?: string
           id?: never
-          userid?: string | null
+          userid?: string
           valor?: number | null
         }
         Relationships: [
@@ -76,99 +100,129 @@ export type Database = {
           },
         ]
       }
+      planos: {
+        Row: {
+          created_at: string | null
+          id: number
+          max_usuarios: number
+          nome: string
+          preco: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          max_usuarios: number
+          nome: string
+          preco: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          max_usuarios?: number
+          nome?: string
+          preco?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
-          assinaturaid: string | null
           ativo: boolean | null
           avatar_url: string | null
-          created_at: string
-          customerid: string | null
+          created_at: string | null
           email: string | null
+          familia_id: string | null
           id: string
           nome: string | null
           phone: string | null
+          plano_id: number | null
           stripe_customer_id: string | null
-          subscription_end_date: string | null
-          subscription_id: string | null
           subscription_status: string | null
-          updated_at: string
+          updated_at: string | null
           username: string | null
           whatsapp: string | null
         }
         Insert: {
-          assinaturaid?: string | null
           ativo?: boolean | null
           avatar_url?: string | null
-          created_at?: string
-          customerid?: string | null
+          created_at?: string | null
           email?: string | null
+          familia_id?: string | null
           id: string
           nome?: string | null
           phone?: string | null
+          plano_id?: number | null
           stripe_customer_id?: string | null
-          subscription_end_date?: string | null
-          subscription_id?: string | null
           subscription_status?: string | null
-          updated_at?: string
+          updated_at?: string | null
           username?: string | null
           whatsapp?: string | null
         }
         Update: {
-          assinaturaid?: string | null
           ativo?: boolean | null
           avatar_url?: string | null
-          created_at?: string
-          customerid?: string | null
+          created_at?: string | null
           email?: string | null
+          familia_id?: string | null
           id?: string
           nome?: string | null
           phone?: string | null
+          plano_id?: number | null
           stripe_customer_id?: string | null
-          subscription_end_date?: string | null
-          subscription_id?: string | null
           subscription_status?: string | null
-          updated_at?: string
+          updated_at?: string | null
           username?: string | null
           whatsapp?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_familia_id_fkey"
+            columns: ["familia_id"]
+            isOneToOne: false
+            referencedRelation: "familias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "planos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transacoes: {
         Row: {
           category_id: string
-          codigo: number | null
-          created_at: string
+          created_at: string | null
           detalhes: string | null
           estabelecimento: string | null
           id: number
           quando: string | null
           tipo: string | null
-          userid: string | null
-          valor: number | null
+          userid: string
+          valor: number
         }
         Insert: {
           category_id: string
-          codigo?: number | null
-          created_at?: string
+          created_at?: string | null
           detalhes?: string | null
           estabelecimento?: string | null
           id?: never
           quando?: string | null
           tipo?: string | null
-          userid?: string | null
-          valor?: number | null
+          userid: string
+          valor: number
         }
         Update: {
           category_id?: string
-          codigo?: number | null
-          created_at?: string
+          created_at?: string | null
           detalhes?: string | null
           estabelecimento?: string | null
           id?: never
           quando?: string | null
           tipo?: string | null
-          userid?: string | null
-          valor?: number | null
+          userid?: string
+          valor?: number
         }
         Relationships: [
           {
@@ -192,7 +246,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      entrar_na_familia: {
+        Args: { p_codigo: string; p_userid: string }
+        Returns: string
+      }
+      get_my_family_members: {
+        Args: never
+        Returns: {
+          member_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

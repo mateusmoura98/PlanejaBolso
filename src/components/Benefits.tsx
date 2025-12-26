@@ -13,10 +13,12 @@ const Benefits = () => {
           suas finanças.
         </p>
 
-        <Button variant="secondary" size="lg" className="group mb-6">
-          Experimente Planeja Bolso Gratuitamente!
-          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-        </Button>
+        <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
+          <Button variant="secondary" size="lg" className="group mb-6">
+            Experimente Planeja Bolso Gratuitamente!
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </a>
 
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">

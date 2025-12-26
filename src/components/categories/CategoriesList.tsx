@@ -84,7 +84,7 @@ export function CategoriesList({ categories, onEdit }: CategoriesListProps) {
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancelar</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => deleteCategory(category.id)}
+                        onClick={() => deleteCategory.mutate(category.id)}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
                         Excluir

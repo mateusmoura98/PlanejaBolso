@@ -26,14 +26,14 @@ const Hero = () => {
 
           {/* BOTÃO */}
           <div className="space-y-6 w-full flex flex-col items-center">
-            <Link to="/auth">
+            <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
               <Button 
                 size="xl" 
                 className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
               >
                 Experimente Planeja Bolso — 3 dias grátis!
               </Button>
-            </Link>
+            </a>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
