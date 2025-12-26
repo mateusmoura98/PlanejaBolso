@@ -40,12 +40,12 @@ export function CategoryForm({ category, onClose }: CategoryFormProps) {
 
     try {
       if (category) {
-        updateCategory({
+        updateCategory.mutate({
           id: category.id,
           updates: { nome: nome.trim(), tags: tags.trim() },
         });
       } else {
-        createCategory({
+        createCategory.mutate({
           nome: nome.trim(),
           tags: tags.trim(),
         });

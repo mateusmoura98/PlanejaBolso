@@ -7,6 +7,7 @@ export interface Category {
   id: string
   created_at: string
   nome: string
+  tags: string | null
   userid: string | null
 }
 
@@ -40,11 +41,11 @@ export function useCategories() {
     enabled: !!user?.id,
   })
 
-  const addCategory = useMutation({
-    mutationFn: async (nome: string) => {
+  const createCategory = useMutation({
+    mutationFn: async ({ nome, tags }: { nome: string; tags?: string }) => {
       const { data, error } = await supabase
         .from('categorias')
-        .insert([{ nome, userid: user?.id }])
+        .insert([{ nome, tags, userid: user?.id }])
         .select()
         .single()
 
@@ -65,10 +66,10 @@ export function useCategories() {
   })
 
   const updateCategory = useMutation({
-    mutationFn: async ({ id, nome }: { id: string; nome: string }) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: { nome: string; tags?: string } }) => {
       const { data, error } = await supabase
         .from('categorias')
-        .update({ nome })
+        .update(updates)
         .eq('id', id)
         .select()
         .single()
@@ -123,8 +124,10 @@ export function useCategories() {
   return {
     categories,
     isLoading,
-    addCategory,
+    createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    isCreating: createCategory.isPending,
+    isUpdating: updateCategory.isPending,
   }
 }

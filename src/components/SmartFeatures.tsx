@@ -1,6 +1,5 @@
 import { ShieldCheck, Zap, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
 const videoPath = "/video-demo.mp4"; 
 
@@ -67,14 +66,14 @@ const SmartFeatures = () => {
 
             {/* BOTÃO VERDE */}
             <div className="mt-12 w-full flex justify-center px-4">
-              <Link to="/auth" className="w-full sm:w-auto">
+              <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
                 <Button 
                   size="xl" 
                   className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
                 >
                   Experimente Planeja Bolso — 3 dias grátis!
                 </Button>
-              </Link>
+              </a>
             </div>
 
           </div>
