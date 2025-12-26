@@ -2,51 +2,50 @@ import { ShieldCheck, Zap, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-// VÍDEO DA MOÇA (DEMO)
 const videoPath = "/video-demo.mp4"; 
 
 const SmartFeatures = () => {
   return (
     <section id="funcionalidades" className="py-20 bg-gray-50 overflow-hidden">
-      <div className="container mx-auto px-4 max-w-6xl">
+      {/* Container principal com Flex Coluna e itens centralizados */}
+      <div className="container mx-auto px-4 max-w-6xl flex flex-col items-center">
         
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full">
           
-          {/* --- 1. BLOCO DE TEXTO E SELOS (Agora fica em CIMA no celular) --- */}
-          <div className="order-1 lg:order-1 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
+          {/* --- BLOCO DE TEXTO (AGORA CENTRALIZADO CORRETAMENTE) --- */}
+          {/* w-full garante que ele ocupe a largura e text-center alinha o texto */}
+          <div className="order-1 lg:order-1 w-full flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
             
-            <div className="space-y-4">
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight">
+            <div className="space-y-4 w-full">
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight mx-auto lg:mx-0 max-w-lg lg:max-w-none">
                 Conheça o Planeja Bolso em menos de 1 minuto
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0">
                 Simplifique sua gestão financeira com clareza, segurança e automação.
               </p>
             </div>
 
-            {/* SELOS VERDES */}
-            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-              <div className="flex items-center gap-2 bg-green-100 text-primary px-4 py-2 rounded-full font-medium text-sm">
+            {/* SELOS VERDES (Centralizados no Mobile) */}
+            <div className="flex flex-wrap justify-center lg:justify-start gap-3 w-full">
+              <div className="flex items-center gap-2 bg-green-100 text-primary px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap">
                 <ThumbsUp className="w-4 h-4" /> Fácil de usar
               </div>
-              <div className="flex items-center gap-2 bg-green-100 text-primary px-4 py-2 rounded-full font-medium text-sm">
+              <div className="flex items-center gap-2 bg-green-100 text-primary px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap">
                 <ShieldCheck className="w-4 h-4" /> Seguro
               </div>
-              <div className="flex items-center gap-2 bg-green-100 text-primary px-4 py-2 rounded-full font-medium text-sm">
+              <div className="flex items-center gap-2 bg-green-100 text-primary px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap">
                 <Zap className="w-4 h-4" /> Inteligência Artificial
               </div>
             </div>
 
           </div>
 
-          {/* --- 2. BLOCO DO VÍDEO E BOTÃO (Agora fica em BAIXO no celular) --- */}
+          {/* --- BLOCO DO VÍDEO E BOTÃO --- */}
           <div className="order-2 lg:order-2 flex flex-col items-center w-full">
             
-            {/* O CELULAR COM O VÍDEO */}
+            {/* O CELULAR COM O VÍDEO (Já estava bom, mantive) */}
             <div className="relative w-full max-w-[280px] md:max-w-[300px]">
-              
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 rounded-full blur-[80px] -z-10" />
-
               <div className="relative z-10 bg-black rounded-[2.5rem] p-3 shadow-2xl border-4 border-gray-900 ring-1 ring-white/10">
                 <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
                   <video
@@ -63,9 +62,9 @@ const SmartFeatures = () => {
               </div>
             </div>
 
-            {/* --- 3. O BOTÃO VERDE NOVO (Embaixo do vídeo) --- */}
+            {/* BOTÃO */}
             <div className="mt-10 w-full flex justify-center">
-              <Link to="/auth">
+              <Link to="/auth" className="w-full sm:w-auto">
                 <Button 
                   size="xl" 
                   className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
