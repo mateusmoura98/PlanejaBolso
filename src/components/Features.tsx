@@ -18,7 +18,7 @@ const features = [
   }
 ];
 
-// VÍDEO DE BAIXO (MUDO)
+// VÍDEO 2: O APP (PLANEJA)
 const videoPath = "/video-planeja.mp4";
 
 const Features = () => {
@@ -28,17 +28,13 @@ const Features = () => {
         
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* --- LADO ESQUERDO: VÍDEO MUDO / AUTOPLAY --- */}
+          {/* --- LADO ESQUERDO: VÍDEO (SEM SOM / AUTOPLAY) --- */}
           <div className="order-1 lg:order-1 flex justify-center w-full">
             <div className="relative w-full max-w-[280px] md:max-w-[300px]">
               
-              {/* Efeito de brilho atrás */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 rounded-full blur-[80px] -z-10" />
 
-              {/* MOLDURA DO CELULAR */}
               <div className="relative z-10 bg-black rounded-[2.5rem] p-3 shadow-2xl border-4 border-gray-900 ring-1 ring-white/10">
-                
-                {/* Tela do Vídeo */}
                 <div className="overflow-hidden rounded-[2rem] bg-gray-900 aspect-[9/16] relative">
                   <video
                     className="w-full h-full object-cover"
@@ -50,12 +46,9 @@ const Features = () => {
                     <source src={videoPath} type="video/mp4" />
                     Seu navegador não suporta vídeos.
                   </video>
-                  
                   {/* Sombra interna leve */}
                   <div className="absolute inset-0 ring-1 ring-black/5 rounded-[2rem] pointer-events-none" />
                 </div>
-                
-                {/* Detalhe da câmera (Notch) */}
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 w-20 h-6 bg-black rounded-full z-20 pointer-events-none" />
               </div>
             </div>
@@ -89,7 +82,6 @@ const Features = () => {
                 </div>
               ))}
             </div>
-
           </div>
 
         </div>
