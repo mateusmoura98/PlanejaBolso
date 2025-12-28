@@ -16,6 +16,7 @@ import Relatorios from "./pages/Relatorios";
 import Perfil from "./pages/Perfil";
 import NotFound from "./pages/NotFound";
 import Plano from "./pages/Plano";
+import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,10 @@ function AppRoutes() {
       <Route 
         path="/plano" 
         element={<Plano />} 
+      />
+      <Route 
+        path="/checkout" 
+        element={<Checkout />} 
       />
       <Route 
         path="/" 
