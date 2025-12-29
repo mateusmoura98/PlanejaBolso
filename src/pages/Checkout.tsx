@@ -1,279 +1,281 @@
-import { useState, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
-import { CreditCard, Lock, Calendar, User, ShieldCheck, ArrowLeft, Check } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { CreditCard, CheckCircle2, ArrowLeft } from 'lucide-react';
+import logo from '@/assets/planeja-bolso-logo.png'; // IMPORT DA LOGO
 
 export default function Checkout() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [loading, setLoading] = useState(false)
-  
-  // Estado para controlar qual plano está selecionado
-  const [selectedPlanType, setSelectedPlanType] = useState<'individual' | 'familia'>(
-    location.state?.plano?.nome?.toLowerCase().includes('família') ? 'familia' : 'individual'
-  )
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
-  const plans = {
-    individual: {
-      name: 'Plano Individual',
-      price: 14.90,
-      features: ['IA Pessoal', 'Gestão Completa', '1 Usuário']
-    },
-    familia: {
-      name: 'Plano Família',
-      price: 24.90,
-      features: ['IA Pessoal', 'Gestão Completa', 'Até 2 Pessoas', 'Visão Compartilhada']
-    }
-  }
+  // O estado que guarda o plano selecionado
+  const [selectedPlan, setSelectedPlan] = useState({
+    name: location.state?.plan?.name || "Individual",
+    value: location.state?.plan?.value || "14,90"
+  });
 
-  const currentPlan = plans[selectedPlanType]
+  const plan = {
+    name: selectedPlan.name,
+    price: selectedPlan.value,
+    features: ['7 dias grátis', 'Acesso completo', 'Cancele a qualquer momento']
+  };
+
+  const currentPlan = plan; // alias para manter compatibilidade
 
   const [formData, setFormData] = useState({
     holderName: '',
-    number: '',
+    cardNumber: '',
     expiryMonth: '',
     expiryYear: '',
-    ccv: ''
-  })
+    cvv: ''
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target
-    setFormData(prev => ({ ...prev, [id]: value }))
-  }
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+  const handleNext = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
     try {
-      // Simulação de envio para o n8n
-      const response = await fetch('SUA_URL_DO_WEBHOOK_N8N_AQUI', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          valor: currentPlan.price,
-          plano: currentPlan.name,
-          tipo: selectedPlanType
-        })
-      })
-
-      // Simulando sucesso para o frontend
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Simulação de envio para o ASAAS
+      // const response = await fetch('https://SUA_API_DO_ASAAS/payment', { ... });
       
-      toast.success(`Assinatura do ${currentPlan.name} realizada!`)
-      navigate('/dashboard')
+      // Aqui entraria a integração real
+      
+      console.log('Dados do Pagamento:', formData);
+      console.log('Plano:', selectedPlan);
+      
+      // Sucesso simulado:
+      setTimeout(() => {
+        setLoading(false);
+        alert("Pagamento processado com sucesso!");
+        navigate("/dashboard");
+      }, 2000);
 
     } catch (error) {
-      toast.error('Erro ao processar pagamento. Verifique os dados.')
-    } finally {
-      setLoading(false)
+      console.error("Erro ao processar pagamento:", error);
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header com Logo - ATUALIZADO */}
-      <header className="bg-white border-b py-4 px-6 mb-8 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="cursor-pointer" onClick={() => navigate('/')}>
+    <div className="min-h-screen w-full bg-gray-50 p-4 font-sans">
+      
+      {/* HEADER COM LOGO - AQUI ESTÁ A MUDANÇA */}
+      <div className="max-w-4xl mx-auto py-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="hover:bg-gray-100">
+                <ArrowLeft className="h-6 w-6 text-gray-700"/>
+            </Button>
+            {/* LOGO INSERIDA E ALINHADA - Tamanho h-16 igual da Landing Page */}
             <img 
-              src="https://finflow.ninelabs.blog/lovable-uploads/b679a5ba-8a42-42cc-bc36-ccf4569fa05f.png" 
+              src={logo} 
               alt="Planeja Bolso" 
-              className="h-10 w-auto object-contain"
+              className="h-16 w-auto object-contain"
             />
-          </div>
-          <div className="flex items-center text-sm text-gray-500 gap-2">
-            <Lock className="h-4 w-4 text-green-600" />
-            <span className="font-medium">Ambiente Seguro</span>
-          </div>
         </div>
-      </header>
-
-      <div className="flex-1 px-4 pb-12">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          
-          {/* Coluna da Esquerda: Resumo do Pedido */}
-          <div className="space-y-6 lg:sticky lg:top-24">
-            <div onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-500 hover:text-gray-800 cursor-pointer transition-colors w-fit">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Voltar</span>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl shadow-sm border space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-1">Resumo do Pedido</h2>
-                <p className="text-gray-500 text-sm">Escolha o plano ideal para você</p>
-              </div>
-
-              {/* Seletor de Plano Bonito */}
-              <div className="grid grid-cols-1 gap-4">
-                <div 
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all flex justify-between items-center ${selectedPlanType === 'individual' ? 'border-green-600 bg-green-50 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
-                  onClick={() => setSelectedPlanType('individual')}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedPlanType === 'individual' ? 'border-green-600' : 'border-gray-300'}`}>
-                      {selectedPlanType === 'individual' && <div className="w-2.5 h-2.5 rounded-full bg-green-600" />}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">Plano Individual</p>
-                      <p className="text-sm text-gray-500">Para quem quer controle total.</p>
-                    </div>
-                  </div>
-                  <span className="font-bold text-gray-900">R$ 14,90</span>
-                </div>
-
-                <div 
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all flex justify-between items-center ${selectedPlanType === 'familia' ? 'border-green-600 bg-green-50 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
-                  onClick={() => setSelectedPlanType('familia')}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedPlanType === 'familia' ? 'border-green-600' : 'border-gray-300'}`}>
-                      {selectedPlanType === 'familia' && <div className="w-2.5 h-2.5 rounded-full bg-green-600" />}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">Plano Família</p>
-                      <p className="text-sm text-gray-500">Gestão compartilhada (2 pessoas).</p>
-                    </div>
-                  </div>
-                  <span className="font-bold text-gray-900">R$ 24,90</span>
-                </div>
-              </div>
-
-              {/* Lista de Benefícios */}
-              <div className="pt-4 border-t">
-                <ul className="space-y-3">
-                  {currentPlan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
-                      <Check className="h-4 w-4 text-green-600" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="pt-4 border-t flex justify-between items-center">
-                <span className="text-lg font-semibold">Total a pagar:</span>
-                <span className="text-2xl font-bold text-green-600">
-                  R$ {currentPlan.price.toFixed(2).replace('.', ',')}
-                  <span className="text-sm text-gray-500 font-normal">/mês</span>
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-              <ShieldCheck className="h-4 w-4 text-green-600" />
-              <span>Garantia de 7 dias ou seu dinheiro de volta</span>
-            </div>
-          </div>
-
-          {/* Coluna da Direita: Formulário de Pagamento */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-            <div className="mb-6">
-              <h3 className="text-xl font-bold mb-2">Dados do Pagamento</h3>
-              <p className="text-gray-500 text-sm">Transação criptografada e segura.</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="holderName">Nome impresso no cartão</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input 
-                    id="holderName" 
-                    placeholder="COMO NO CARTÃO" 
-                    className="pl-10 uppercase h-11"
-                    value={formData.holderName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="number">Número do Cartão</Label>
-                <div className="relative">
-                  <CreditCard className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input 
-                    id="number" 
-                    placeholder="0000 0000 0000 0000" 
-                    className="pl-10 h-11"
-                    maxLength={19}
-                    value={formData.number}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="expiryMonth">Validade</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Input 
-                      id="expiryMonth" 
-                      placeholder="MM" 
-                      className="h-11 text-center"
-                      maxLength={2}
-                      value={formData.expiryMonth}
-                      onChange={handleInputChange}
-                      required
-                    />
-                    <Input 
-                      id="expiryYear" 
-                      placeholder="AAAA" 
-                      className="h-11 text-center"
-                      maxLength={4}
-                      value={formData.expiryYear}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="ccv">CVV</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input 
-                      id="ccv" 
-                      placeholder="123" 
-                      className="pl-10 h-11"
-                      maxLength={4}
-                      type="password"
-                      value={formData.ccv}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <Button 
-                type="submit" 
-                className="w-full h-14 text-lg font-semibold bg-green-600 hover:bg-green-700 shadow-md transition-all hover:scale-[1.01]" 
-                disabled={loading}
-              >
-                {loading ? 'Processando...' : `Confirmar Assinatura`}
-              </Button>
-
-              <div className="flex justify-center gap-4 opacity-50 grayscale mt-6">
-                <CreditCard className="h-6 w-6" />
-                <span className="text-xs">Visa</span>
-                <span className="text-xs">Mastercard</span>
-                <span className="text-xs">Elo</span>
-                <span className="text-xs">Amex</span>
-              </div>
-            </form>
-          </div>
-
+        <div className="flex items-center gap-2 text-green-600 font-medium bg-green-50 px-3 py-1 rounded-full text-sm">
+            <CheckCircle2 className="w-4 h-4"/> Ambiente Seguro
         </div>
       </div>
+
+      <main className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+
+        {/* Coluna da Esquerda: Resumo do Pedido */}
+        <div className="space-y-6">
+          <div className="space-y-2">
+             <h1 className="text-3xl font-bold text-gray-900">Resumo do Pedido</h1>
+             <p className="text-gray-500">Escolha o plano ideal para você</p>
+          </div>
+
+          <Card className="border-2 border-green-600 shadow-md">
+            <CardContent className="p-6">
+               <div className="flex justify-between items-start mb-4">
+                 <div>
+                    {/* Botão de Seleção (Se quiser trocar aqui mesmo) */}
+                    <div className="flex gap-2 mb-4 bg-gray-100 p-1 rounded-lg w-fit">
+                        <button 
+                            onClick={() => setSelectedPlan({ name: "Individual", value: "14,90" })}
+                            className={`px-3 py-1 text-sm rounded-md transition-all ${selectedPlan.name === "Individual" ? "bg-white shadow text-green-700 font-bold" : "text-gray-500 hover:text-gray-900"}`}
+                        >
+                            Individual
+                        </button>
+                        <button 
+                            onClick={() => setSelectedPlan({ name: "Família", value: "24,90" })}
+                            className={`px-3 py-1 text-sm rounded-md transition-all ${selectedPlan.name === "Família" ? "bg-white shadow text-green-700 font-bold" : "text-gray-500 hover:text-gray-900"}`}
+                        >
+                            Família
+                        </button>
+                    </div>
+
+                    <h3 className="font-bold text-xl">{currentPlan.name}</h3>
+                    <p className="text-sm text-gray-500">Para quem quer controle total.</p>
+                 </div>
+                 <div className="text-right">
+                    <span className="text-2xl font-bold text-green-600">R$ {currentPlan.price}</span>
+                 </div>
+               </div>
+
+               <ul className="space-y-2">
+                 {currentPlan.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                        <CheckCircle2 className="w-4 h-4 text-green-600" /> {feature}
+                    </li>
+                 ))}
+               </ul>
+            </CardContent>
+            <div className="bg-green-50 p-4 border-t border-green-100 flex justify-between items-center rounded-b-lg">
+                <span className="font-medium text-gray-700">Total a pagar:</span>
+                <span className="font-bold text-xl text-green-700">R$ {currentPlan.price}<span className="text-sm font-normal text-gray-500">/mês</span></span>
+            </div>
+          </Card>
+
+          <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 p-3 rounded-lg border border-gray-200">
+             <ShieldCheckIcon className="w-5 h-5 text-gray-600"/>
+             <span>Garantia de 7 dias ou seu dinheiro de volta</span>
+          </div>
+        </div>
+
+        {/* Coluna da Direita: Formulário de Pagamento */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+            <div className="mb-6">
+                <h2 className="text-xl font-bold text-gray-900">Dados do Pagamento</h2>
+                <p className="text-sm text-gray-500">Transação criptografada e segura.</p>
+            </div>
+
+            <form onSubmit={handleNext} className="space-y-4">
+                
+                <div className="space-y-2">
+                    <Label htmlFor="holderName">Nome impresso no cartão</Label>
+                    <div className="relative">
+                        <UserIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input 
+                            id="holderName" 
+                            placeholder="COMO NO CARTÃO" 
+                            className="pl-9 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500"
+                            value={formData.holderName}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="cardNumber">Número do Cartão</Label>
+                    <div className="relative">
+                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input 
+                            id="cardNumber" 
+                            placeholder="0000 0000 0000 0000" 
+                            className="pl-9 h-12 border-gray-300"
+                            value={formData.cardNumber}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label>Validade</Label>
+                        <div className="flex gap-2">
+                            <Input 
+                                id="expiryMonth" 
+                                placeholder="MM" 
+                                className="h-12 border-gray-300 text-center"
+                                maxLength={2}
+                                value={formData.expiryMonth}
+                                onChange={handleInputChange}
+                                required
+                            />
+                             <Input 
+                                id="expiryYear" 
+                                placeholder="AAAA" 
+                                className="h-12 border-gray-300 text-center"
+                                maxLength={4}
+                                value={formData.expiryYear}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="cvv">CVV</Label>
+                        <div className="relative">
+                            <LockIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <Input 
+                                id="cvv" 
+                                placeholder="123" 
+                                className="pl-9 h-12 border-gray-300"
+                                maxLength={3}
+                                value={formData.cvv}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <Button 
+                    type="submit" 
+                    className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-700 mt-6 shadow-lg shadow-green-200"
+                    disabled={loading}
+                >
+                    {loading ? "Processando..." : "Confirmar Assinatura"}
+                </Button>
+
+                <div className="flex justify-center gap-4 mt-4 text-gray-400 text-xs">
+                     <span className="flex items-center gap-1"><CreditCard className="w-3 h-3"/> Visa</span>
+                     <span className="flex items-center gap-1"><CreditCard className="w-3 h-3"/> Mastercard</span>
+                     <span className="flex items-center gap-1"><CreditCard className="w-3 h-3"/> Elo</span>
+                     <span className="flex items-center gap-1"><CreditCard className="w-3 h-3"/> Amex</span>
+                </div>
+
+            </form>
+        </div>
+
+      </main>
     </div>
-  )
+  );
+}
+
+// Ícones Auxiliares (Para não quebrar se não tiver instalado)
+function ShieldCheckIcon(props: any) {
+    return (
+      <svg
+        {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+    )
+}
+
+function UserIcon(props: any) {
+    return (
+        <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    )
+}
+
+function LockIcon(props: any) {
+    return (
+        <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    )
 }
