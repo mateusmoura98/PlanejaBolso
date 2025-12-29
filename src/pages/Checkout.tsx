@@ -28,7 +28,7 @@ export default function Checkout() {
     familia: {
       name: 'Plano Família',
       price: 24.90,
-      features: ['IA Pessoal', 'Gestão Completa', 'Até 5 Pessoas', 'Visão Compartilhada']
+      features: ['IA Pessoal', 'Gestão Completa', 'Até 2 Pessoas', 'Visão Compartilhada']
     }
   }
 
