@@ -52,7 +52,7 @@ export default function Checkout() {
     setLoading(true);
 
     // URL do seu Webhook no n8n
-    const N8N_WEBHOOK_URL = "https://SEU-N8N.com/webhook-test/pagamento-unificado";
+    const N8N_WEBHOOK_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/pagamento-unificado";
 
     try {
       // Prepara os dados para enviar pro n8n
