@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { CreditCard, Lock, Calendar, User, ShieldCheck, Wallet, ArrowLeft, Check } from 'lucide-react'
+import { CreditCard, Lock, Calendar, User, ShieldCheck, ArrowLeft, Check } from 'lucide-react'
 
 export default function Checkout() {
   const navigate = useNavigate()
@@ -26,7 +26,6 @@ export default function Checkout() {
     familia: {
       name: 'Plano Família',
       price: 24.90,
-      // CORREÇÃO AQUI: Mudado para 2 Pessoas
       features: ['IA Pessoal', 'Gestão Completa', 'Até 2 Pessoas', 'Visão Compartilhada']
     }
   }
@@ -78,18 +77,19 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header com Logo */}
+      {/* Header com Logo - ATUALIZADO */}
       <header className="bg-white border-b py-4 px-6 mb-8 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="bg-green-600 p-2 rounded-lg">
-              <Wallet className="h-6 w-6 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-800">Planeja Bolso</span>
+          <div className="cursor-pointer" onClick={() => navigate('/')}>
+            <img 
+              src="https://finflow.ninelabs.blog/lovable-uploads/b679a5ba-8a42-42cc-bc36-ccf4569fa05f.png" 
+              alt="Planeja Bolso" 
+              className="h-10 w-auto object-contain"
+            />
           </div>
           <div className="flex items-center text-sm text-gray-500 gap-2">
-            <Lock className="h-4 w-4" />
-            <span>Ambiente Seguro</span>
+            <Lock className="h-4 w-4 text-green-600" />
+            <span className="font-medium">Ambiente Seguro</span>
           </div>
         </div>
       </header>
@@ -113,7 +113,7 @@ export default function Checkout() {
               {/* Seletor de Plano Bonito */}
               <div className="grid grid-cols-1 gap-4">
                 <div 
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all flex justify-between items-center ${selectedPlanType === 'individual' ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'}`}
+                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all flex justify-between items-center ${selectedPlanType === 'individual' ? 'border-green-600 bg-green-50 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
                   onClick={() => setSelectedPlanType('individual')}
                 >
                   <div className="flex items-center gap-3">
@@ -129,7 +129,7 @@ export default function Checkout() {
                 </div>
 
                 <div 
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all flex justify-between items-center ${selectedPlanType === 'familia' ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'}`}
+                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all flex justify-between items-center ${selectedPlanType === 'familia' ? 'border-green-600 bg-green-50 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
                   onClick={() => setSelectedPlanType('familia')}
                 >
                   <div className="flex items-center gap-3">
@@ -138,7 +138,6 @@ export default function Checkout() {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">Plano Família</p>
-                      {/* CORREÇÃO AQUI: Mudado para 2 pessoas */}
                       <p className="text-sm text-gray-500">Gestão compartilhada (2 pessoas).</p>
                     </div>
                   </div>
@@ -263,7 +262,7 @@ export default function Checkout() {
                 {loading ? 'Processando...' : `Confirmar Assinatura`}
               </Button>
 
-              <div className="flex justify-center gap-4 opacity-50 grayscale">
+              <div className="flex justify-center gap-4 opacity-50 grayscale mt-6">
                 <CreditCard className="h-6 w-6" />
                 <span className="text-xs">Visa</span>
                 <span className="text-xs">Mastercard</span>
