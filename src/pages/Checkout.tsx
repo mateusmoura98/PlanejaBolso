@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { toast } from 'sonner'
 import { CreditCard, Lock, Calendar, User, ShieldCheck, Wallet, ArrowLeft, Check } from 'lucide-react'
 
@@ -14,7 +13,6 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false)
   
   // Estado para controlar qual plano está selecionado
-  // Se vier da página anterior, usa ele. Se não, padrão é 'individual'
   const [selectedPlanType, setSelectedPlanType] = useState<'individual' | 'familia'>(
     location.state?.plano?.nome?.toLowerCase().includes('família') ? 'familia' : 'individual'
   )
@@ -28,6 +26,7 @@ export default function Checkout() {
     familia: {
       name: 'Plano Família',
       price: 24.90,
+      // CORREÇÃO AQUI: Mudado para 2 Pessoas
       features: ['IA Pessoal', 'Gestão Completa', 'Até 2 Pessoas', 'Visão Compartilhada']
     }
   }
@@ -53,7 +52,6 @@ export default function Checkout() {
 
     try {
       // Simulação de envio para o n8n
-      // Aqui você coloca a URL do seu Webhook do n8n que vai processar o pagamento no Asaas
       const response = await fetch('SUA_URL_DO_WEBHOOK_N8N_AQUI', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,7 +64,6 @@ export default function Checkout() {
       })
 
       // Simulando sucesso para o frontend
-      // Remova esse timeout e use a logica do response.ok na vida real
       await new Promise(resolve => setTimeout(resolve, 2000))
       
       toast.success(`Assinatura do ${currentPlan.name} realizada!`)
@@ -141,7 +138,8 @@ export default function Checkout() {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">Plano Família</p>
-                      <p className="text-sm text-gray-500">Gestão compartilhada (5 pessoas).</p>
+                      {/* CORREÇÃO AQUI: Mudado para 2 pessoas */}
+                      <p className="text-sm text-gray-500">Gestão compartilhada (2 pessoas).</p>
                     </div>
                   </div>
                   <span className="font-bold text-gray-900">R$ 24,90</span>
@@ -266,7 +264,6 @@ export default function Checkout() {
               </Button>
 
               <div className="flex justify-center gap-4 opacity-50 grayscale">
-                {/* Você pode colocar imagens de bandeiras de cartão aqui se quiser */}
                 <CreditCard className="h-6 w-6" />
                 <span className="text-xs">Visa</span>
                 <span className="text-xs">Mastercard</span>
