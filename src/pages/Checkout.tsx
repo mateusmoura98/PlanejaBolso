@@ -4,13 +4,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, CheckCircle2, ArrowLeft, User, Users, ShieldCheck, Lock } from 'lucide-react';
+import { CreditCard, CheckCircle2, ArrowLeft, User, Users, Lock, QrCode, Copy } from 'lucide-react';
 import logo from '@/assets/planeja-bolso-logo.png';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
+  
+  // Estado para controlar a etapa: 'form' (preenchendo) ou 'pix_success' (mostrando QR Code)
+  const [step, setStep] = useState<'form' | 'pix_success'>('form');
 
   // Estado do plano selecionado
   const [selectedPlan, setSelectedPlan] = useState({
@@ -19,14 +22,24 @@ export default function Checkout() {
     type: "individual"
   });
 
-  // Estado dos dados do cartão
+  // Estado do Método de Pagamento ('CREDIT_CARD' ou 'PIX')
+  const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'PIX'>('CREDIT_CARD');
+
+  // Estado dos dados do formulário
   const [formData, setFormData] = useState({
     holderName: '',
+    cpfCnpj: '',
+    // Campos exclusivos do cartão
     cardNumber: '',
     expiryMonth: '',
     expiryYear: '',
-    cvv: '',
-    cpfCnpj: '' // Adicionei CPF pois o Asaas exige para processar
+    cvv: ''
+  });
+
+  // Simulação de dados do PIX (Isso virá do seu n8n na vida real)
+  const [pixData, setPixData] = useState({
+    qrCodeBase64: "", 
+    copyPaste: "00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540510.005802BR5913Planeja Bolso6008Salvador62070503***6304E2CA"
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,26 +51,46 @@ export default function Checkout() {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      // ⚠️ AQUI É ONDE A MÁGICA DO N8N VAI ACONTECER
-      // Você vai enviar 'formData' + 'selectedPlan' para o seu Webhook do n8n
-      // O n8n vai falar com o Asaas e devolver se aprovou ou não.
-      
-      console.log('Enviando para n8n:', { ...formData, plan: selectedPlan });
+    // URL do seu Webhook no n8n
+    const N8N_WEBHOOK_URL = "https://SEU-N8N.com/webhook-test/pagamento-unificado";
 
-      // Simulação de tempo de processamento
+    try {
+      // Prepara os dados para enviar pro n8n
+      const payload = {
+        ...formData,
+        plan: selectedPlan,
+        billingType: paymentMethod // Envia se é PIX ou Cartão
+      };
+
+      console.log('Enviando para n8n:', payload);
+
+      // --- SIMULAÇÃO DA RESPOSTA DO N8N ---
+      // Na vida real, você fará o fetch aqui.
+      // const response = await fetch(...)
+      
       setTimeout(() => {
         setLoading(false);
-        // Se deu certo:
-        alert("Pagamento realizado com sucesso!"); // Depois trocamos por uma tela de sucesso bonita
-        navigate("/dashboard");
+
+        if (paymentMethod === 'PIX') {
+          // Se for PIX, mudamos a tela para mostrar o QR Code
+          setStep('pix_success');
+        } else {
+          // Se for Cartão, vai direto para o Dashboard
+          alert("Pagamento no Cartão Aprovado!");
+          navigate("/dashboard");
+        }
       }, 2000);
 
     } catch (error) {
-      console.error("Erro no pagamento:", error);
+      console.error("Erro:", error);
       setLoading(false);
-      alert("Erro ao processar pagamento. Verifique os dados.");
+      alert("Erro ao processar. Tente novamente.");
     }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(pixData.copyPaste);
+    alert("Código PIX copiado!");
   };
 
   return (
@@ -72,7 +105,7 @@ export default function Checkout() {
             <img src={logo} alt="Planeja Bolso" className="h-16 w-auto object-contain" />
         </div>
         <div className="flex items-center gap-2 text-green-600 font-medium bg-green-50 px-3 py-1 rounded-full text-sm">
-            <Lock className="w-4 h-4"/> Pagamento 100% Seguro
+            <Lock className="w-4 h-4"/> Ambiente Seguro
         </div>
       </div>
 
@@ -146,129 +179,183 @@ export default function Checkout() {
                </div>
             </CardContent>
           </Card>
-
-          <div className="flex items-center gap-2 text-xs text-gray-400 justify-center">
-             <ShieldCheck className="w-4 h-4"/>
-             <span>Garantia de 7 dias incondicional</span>
-          </div>
         </div>
 
-        {/* --- LADO DIREITO: FORMULÁRIO DE CARTÃO (Checkout Transparente) --- */}
-        <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 h-fit">
-            <div className="mb-6 flex justify-between items-center">
-                <div>
-                    <h2 className="text-xl font-bold text-gray-900">Dados do Pagamento</h2>
-                    <p className="text-sm text-gray-500">Preencha os dados do seu cartão</p>
-                </div>
-                <div className="flex gap-2 opacity-70">
-                     <span className="text-[10px] border px-1 rounded">VISA</span>
-                     <span className="text-[10px] border px-1 rounded">MASTER</span>
+        {/* --- LADO DIREITO: PAGAMENTO (CARTÃO OU PIX) --- */}
+        <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 h-fit transition-all">
+            
+            {/* SELETOR DE MÉTODO DE PAGAMENTO */}
+            <div className="mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Como você prefere pagar?</h2>
+                <div className="grid grid-cols-2 gap-4">
+                    <button
+                        onClick={() => setPaymentMethod('CREDIT_CARD')}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
+                            paymentMethod === 'CREDIT_CARD' 
+                            ? 'border-green-600 bg-green-50 text-green-700' 
+                            : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                        }`}
+                    >
+                        <CreditCard className="w-6 h-6 mb-2" />
+                        <span className="font-bold text-sm">Cartão de Crédito</span>
+                    </button>
+
+                    <button
+                        onClick={() => setPaymentMethod('PIX')}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
+                            paymentMethod === 'PIX' 
+                            ? 'border-green-600 bg-green-50 text-green-700' 
+                            : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                        }`}
+                    >
+                        <QrCode className="w-6 h-6 mb-2" />
+                        <span className="font-bold text-sm">PIX</span>
+                    </button>
                 </div>
             </div>
 
-            <form onSubmit={handlePayment} className="space-y-5">
-                
-                <div className="space-y-2">
-                    <Label htmlFor="holderName" className="text-gray-700 font-medium text-sm">Nome impresso no cartão</Label>
-                    <div className="relative">
-                        <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                        <Input 
-                            id="holderName" 
-                            placeholder="COMO NO CARTÃO" 
-                            className="pl-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 bg-gray-50 transition-all"
-                            value={formData.holderName}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="cpfCnpj" className="text-gray-700 font-medium text-sm">CPF do Titular</Label>
-                    <div className="relative">
-                        <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                        <Input 
-                            id="cpfCnpj" 
-                            placeholder="000.000.000-00" 
-                            className="pl-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 bg-gray-50 transition-all"
-                            value={formData.cpfCnpj}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="cardNumber" className="text-gray-700 font-medium text-sm">Número do Cartão</Label>
-                    <div className="relative">
-                        <CreditCard className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                        <Input 
-                            id="cardNumber" 
-                            placeholder="0000 0000 0000 0000" 
-                            className="pl-10 h-12 border-gray-300 bg-gray-50"
-                            value={formData.cardNumber}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+            {/* --- CONTEÚDO DINÂMICO --- */}
+            {step === 'form' ? (
+                <form onSubmit={handlePayment} className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    
+                    {/* CAMPOS COMUNS (NOME E CPF) */}
                     <div className="space-y-2">
-                        <Label className="text-gray-700 font-medium text-sm">Validade</Label>
-                        <div className="flex gap-2">
-                            <Input 
-                                id="expiryMonth" 
-                                placeholder="MM" 
-                                className="h-12 border-gray-300 text-center bg-gray-50"
-                                maxLength={2}
-                                value={formData.expiryMonth}
-                                onChange={handleInputChange}
-                                required
-                            />
-                             <Input 
-                                id="expiryYear" 
-                                placeholder="AA" 
-                                className="h-12 border-gray-300 text-center bg-gray-50"
-                                maxLength={2}
-                                value={formData.expiryYear}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="cvv" className="text-gray-700 font-medium text-sm">CVV</Label>
+                        <Label htmlFor="holderName" className="text-gray-700 font-medium text-sm">Nome Completo</Label>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                            <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                             <Input 
-                                id="cvv" 
-                                placeholder="123" 
-                                className="pl-10 h-12 border-gray-300 bg-gray-50"
-                                maxLength={4}
-                                value={formData.cvv}
+                                id="holderName" 
+                                placeholder="Seu nome completo" 
+                                className="pl-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 bg-gray-50"
+                                value={formData.holderName}
                                 onChange={handleInputChange}
                                 required
                             />
                         </div>
                     </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="cpfCnpj" className="text-gray-700 font-medium text-sm">CPF</Label>
+                        <div className="relative">
+                            <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                            <Input 
+                                id="cpfCnpj" 
+                                placeholder="000.000.000-00" 
+                                className="pl-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 bg-gray-50"
+                                value={formData.cpfCnpj}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {/* CAMPOS ESPECÍFICOS DO CARTÃO */}
+                    {paymentMethod === 'CREDIT_CARD' && (
+                        <div className="space-y-5 animate-in fade-in duration-300">
+                            <div className="space-y-2">
+                                <Label htmlFor="cardNumber" className="text-gray-700 font-medium text-sm">Número do Cartão</Label>
+                                <div className="relative">
+                                    <CreditCard className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                                    <Input 
+                                        id="cardNumber" 
+                                        placeholder="0000 0000 0000 0000" 
+                                        className="pl-10 h-12 border-gray-300 bg-gray-50"
+                                        value={formData.cardNumber}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-gray-700 font-medium text-sm">Validade</Label>
+                                    <div className="flex gap-2">
+                                        <Input 
+                                            id="expiryMonth" 
+                                            placeholder="MM" 
+                                            className="h-12 border-gray-300 text-center bg-gray-50"
+                                            maxLength={2}
+                                            value={formData.expiryMonth}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                        <Input 
+                                            id="expiryYear" 
+                                            placeholder="AA" 
+                                            className="h-12 border-gray-300 text-center bg-gray-50"
+                                            maxLength={2}
+                                            value={formData.expiryYear}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="cvv" className="text-gray-700 font-medium text-sm">CVV</Label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                                        <Input 
+                                            id="cvv" 
+                                            placeholder="123" 
+                                            className="pl-10 h-12 border-gray-300 bg-gray-50"
+                                            maxLength={4}
+                                            value={formData.cvv}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* BOTÃO DE CONFIRMAÇÃO */}
+                    <Button 
+                        type="submit" 
+                        className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-700 mt-4 shadow-lg shadow-green-200 transition-all hover:scale-[1.01]"
+                        disabled={loading}
+                    >
+                        {loading ? "Processando..." : (paymentMethod === 'PIX' ? 'Gerar Código PIX' : 'Confirmar Assinatura')}
+                    </Button>
+
+                </form>
+            ) : (
+                /* --- TELA DE SUCESSO PIX (QR CODE) --- */
+                <div className="flex flex-col items-center justify-center space-y-6 animate-in zoom-in duration-300 py-4">
+                    <div className="text-center">
+                        <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                        <h2 className="text-2xl font-bold text-gray-900">Pedido Criado!</h2>
+                        <p className="text-gray-500">Escaneie o QR Code abaixo para pagar.</p>
+                    </div>
+
+                    <div className="border-4 border-green-600 p-2 rounded-xl">
+                        {/* Aqui você vai colocar a imagem do QR Code que vier do n8n */}
+                        <div className="w-48 h-48 bg-gray-200 flex items-center justify-center text-gray-400">
+                             <QrCode className="w-12 h-12"/>
+                        </div>
+                    </div>
+
+                    <div className="w-full">
+                        <Label className="text-xs text-gray-500 mb-1 block">Ou copie e cole o código:</Label>
+                        <div className="flex gap-2">
+                            <Input value={pixData.copyPaste} readOnly className="bg-gray-50 text-xs font-mono" />
+                            <Button size="icon" variant="outline" onClick={copyToClipboard}>
+                                <Copy className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </div>
+
+                    <p className="text-center text-xs text-yellow-600 bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                        Após o pagamento, seu acesso será liberado automaticamente em instantes!
+                    </p>
+                    
+                    <Button variant="ghost" onClick={() => navigate("/dashboard")} className="text-gray-500">
+                        Já fiz o pagamento
+                    </Button>
                 </div>
-
-                <Button 
-                    type="submit" 
-                    className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-700 mt-4 shadow-lg shadow-green-200 transition-all hover:scale-[1.01]"
-                    disabled={loading}
-                >
-                    {loading ? "Processando..." : `Pagar R$ ${selectedPlan.value}`}
-                </Button>
-
-                <div className="flex items-center justify-center gap-2 mt-4 text-xs text-gray-400">
-                    <Lock className="w-3 h-3" />
-                    Seus dados estão protegidos por criptografia SSL.
-                </div>
-
-            </form>
+            )}
         </div>
 
       </main>
