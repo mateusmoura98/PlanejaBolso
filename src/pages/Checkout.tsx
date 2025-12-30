@@ -36,10 +36,10 @@ export default function Checkout() {
     cvv: ''
   });
 
-  // Simulação de dados do PIX (Isso virá do seu n8n na vida real)
+  // Estado para guardar os dados do PIX que virão do n8n
   const [pixData, setPixData] = useState({
     qrCodeBase64: "", 
-    copyPaste: "00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540510.005802BR5913Planeja Bolso6008Salvador62070503***6304E2CA"
+    copyPaste: ""
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,11 +51,11 @@ export default function Checkout() {
     e.preventDefault();
     setLoading(true);
 
-    // URL do seu Webhook no n8n
+    // URL do seu Webhook no n8n (Link Correto)
     const N8N_WEBHOOK_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/pagamento-unificado";
 
     try {
-      // Prepara os dados para enviar pro n8n
+      // 1. Prepara os dados para enviar pro n8n
       const payload = {
         ...formData,
         plan: selectedPlan,
@@ -64,27 +64,43 @@ export default function Checkout() {
 
       console.log('Enviando para n8n:', payload);
 
-      // --- SIMULAÇÃO DA RESPOSTA DO N8N ---
-      // Na vida real, você fará o fetch aqui.
-      // const response = await fetch(...)
-      
-      setTimeout(() => {
-        setLoading(false);
+      // 2. Envio REAL para o n8n
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
+      // 3. Recebe a resposta do n8n
+      const data = await response.json();
+      console.log('Resposta do n8n:', data);
+
+      // 4. Verifica se deu certo
+      if (data.success) {
         if (paymentMethod === 'PIX') {
-          // Se for PIX, mudamos a tela para mostrar o QR Code
+          // Se for PIX, pega o QR Code que o n8n mandou e mostra na tela
+          setPixData({
+            qrCodeBase64: data.qrCodeBase64, 
+            copyPaste: data.copyPaste
+          });
           setStep('pix_success');
         } else {
           // Se for Cartão, vai direto para o Dashboard
           alert("Pagamento no Cartão Aprovado!");
           navigate("/dashboard");
         }
-      }, 2000);
+      } else {
+        // Se o n8n responder erro
+        alert("Erro no pagamento: " + (data.message || "Tente novamente."));
+      }
 
     } catch (error) {
-      console.error("Erro:", error);
+      console.error("Erro na comunicação:", error);
+      alert("Erro ao conectar com o servidor. Verifique se o n8n está ativo.");
+    } finally {
       setLoading(false);
-      alert("Erro ao processar. Tente novamente.");
     }
   };
 
@@ -189,6 +205,7 @@ export default function Checkout() {
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Como você prefere pagar?</h2>
                 <div className="grid grid-cols-2 gap-4">
                     <button
+                        type="button"
                         onClick={() => setPaymentMethod('CREDIT_CARD')}
                         className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
                             paymentMethod === 'CREDIT_CARD' 
@@ -201,6 +218,7 @@ export default function Checkout() {
                     </button>
 
                     <button
+                        type="button"
                         onClick={() => setPaymentMethod('PIX')}
                         className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
                             paymentMethod === 'PIX' 
@@ -330,11 +348,17 @@ export default function Checkout() {
                         <p className="text-gray-500">Escaneie o QR Code abaixo para pagar.</p>
                     </div>
 
-                    <div className="border-4 border-green-600 p-2 rounded-xl">
-                        {/* Aqui você vai colocar a imagem do QR Code que vier do n8n */}
-                        <div className="w-48 h-48 bg-gray-200 flex items-center justify-center text-gray-400">
-                             <QrCode className="w-12 h-12"/>
-                        </div>
+                    <div className="border-4 border-green-600 p-2 rounded-xl bg-white">
+                        {/* AQUI É ONDE O QR CODE DO ASAAS APARECE */}
+                        {pixData.qrCodeBase64 ? (
+                            <img 
+                                src={`data:image/png;base64,${pixData.qrCodeBase64}`} 
+                                alt="QR Code Pix" 
+                                className="w-48 h-48 object-contain"
+                            />
+                        ) : (
+                            <div className="w-48 h-48 flex items-center justify-center">Carregando...</div>
+                        )}
                     </div>
 
                     <div className="w-full">
