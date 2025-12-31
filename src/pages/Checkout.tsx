@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, CheckCircle2, ArrowLeft, User, Users, Lock, QrCode, Copy } from 'lucide-react';
+import { CreditCard, CheckCircle2, ArrowLeft, User, Users, Lock, QrCode, Copy, Mail } from 'lucide-react';
 import logo from '@/assets/planeja-bolso-logo.png';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   
-  // Estado para controlar a etapa: 'form' (preenchendo) ou 'pix_success' (mostrando QR Code)
+  // Controle das telas (Formulário ou QR Code)
   const [step, setStep] = useState<'form' | 'pix_success'>('form');
 
   // Estado do plano selecionado
@@ -22,49 +24,57 @@ export default function Checkout() {
     type: "individual"
   });
 
-  // Estado do Método de Pagamento ('CREDIT_CARD' ou 'PIX')
+  // Estado do Método de Pagamento
   const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'PIX'>('CREDIT_CARD');
 
-  // Estado dos dados do formulário
+  // Dados do formulário
   const [formData, setFormData] = useState({
     holderName: '',
+    email: '',
     cpfCnpj: '',
-    // Campos exclusivos do cartão
     cardNumber: '',
     expiryMonth: '',
     expiryYear: '',
     cvv: ''
   });
 
-  // Estado para guardar os dados do PIX que virão do n8n
+  // Dados do PIX (para exibir quando o n8n devolver)
   const [pixData, setPixData] = useState({
     qrCodeBase64: "", 
     copyPaste: ""
   });
+
+  // Preenche o email automaticamente se o usuário já estiver logado
+  useEffect(() => {
+    if (user?.email) {
+      setFormData(prev => ({ ...prev, email: user.email || '' }));
+    }
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
   };
 
+  // FUNÇÃO QUE ENVIA O PAGAMENTO DE VERDADE
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // URL do seu Webhook no n8n (Link Correto)
+    // URL do seu Webhook no n8n
     const N8N_WEBHOOK_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/pagamento-unificado";
 
     try {
-      // 1. Prepara os dados para enviar pro n8n
+      // 1. Prepara o pacote de dados
       const payload = {
         ...formData,
         plan: selectedPlan,
-        billingType: paymentMethod // Envia se é PIX ou Cartão
+        billingType: paymentMethod
       };
 
       console.log('Enviando para n8n:', payload);
 
-      // 2. Envio REAL para o n8n
+      // 2. Envia para o n8n
       const response = await fetch(N8N_WEBHOOK_URL, {
         method: "POST",
         headers: {
@@ -73,32 +83,31 @@ export default function Checkout() {
         body: JSON.stringify(payload),
       });
 
-      // 3. Recebe a resposta do n8n
+      // 3. Recebe a resposta
       const data = await response.json();
       console.log('Resposta do n8n:', data);
 
-      // 4. Verifica se deu certo
+      // 4. Verifica sucesso
       if (data.success) {
         if (paymentMethod === 'PIX') {
-          // Se for PIX, pega o QR Code que o n8n mandou e mostra na tela
+          // Se for PIX, mostra o QR Code que veio do n8n
           setPixData({
             qrCodeBase64: data.qrCodeBase64, 
             copyPaste: data.copyPaste
           });
           setStep('pix_success');
         } else {
-          // Se for Cartão, vai direto para o Dashboard
+          // Se for Cartão, sucesso direto
           alert("Pagamento no Cartão Aprovado!");
           navigate("/dashboard");
         }
       } else {
-        // Se o n8n responder erro
         alert("Erro no pagamento: " + (data.message || "Tente novamente."));
       }
 
     } catch (error) {
       console.error("Erro na comunicação:", error);
-      alert("Erro ao conectar com o servidor. Verifique se o n8n está ativo.");
+      alert("Erro ao conectar com o servidor de pagamento.");
     } finally {
       setLoading(false);
     }
@@ -182,7 +191,6 @@ export default function Checkout() {
             </div>
           </div>
 
-          {/* Resumo Financeiro */}
           <Card className="bg-gray-50 border-dashed border-2 border-gray-200 shadow-none">
             <CardContent className="p-4">
                <div className="flex justify-between items-center text-sm mb-2">
@@ -197,10 +205,9 @@ export default function Checkout() {
           </Card>
         </div>
 
-        {/* --- LADO DIREITO: PAGAMENTO (CARTÃO OU PIX) --- */}
+        {/* --- LADO DIREITO: FORMULÁRIO DE PAGAMENTO --- */}
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 h-fit transition-all">
             
-            {/* SELETOR DE MÉTODO DE PAGAMENTO */}
             <div className="mb-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Como você prefere pagar?</h2>
                 <div className="grid grid-cols-2 gap-4">
@@ -232,11 +239,27 @@ export default function Checkout() {
                 </div>
             </div>
 
-            {/* --- CONTEÚDO DINÂMICO --- */}
             {step === 'form' ? (
                 <form onSubmit={handlePayment} className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     
-                    {/* CAMPOS COMUNS (NOME E CPF) */}
+                    {/* E-MAIL */}
+                    <div className="space-y-2">
+                        <Label htmlFor="email" className="text-gray-700 font-medium text-sm">Seu E-mail</Label>
+                        <div className="relative">
+                            <Mail className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                            <Input 
+                                id="email" 
+                                type="email"
+                                placeholder="exemplo@email.com" 
+                                className="pl-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 bg-gray-50"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {/* NOME */}
                     <div className="space-y-2">
                         <Label htmlFor="holderName" className="text-gray-700 font-medium text-sm">Nome Completo</Label>
                         <div className="relative">
@@ -252,6 +275,7 @@ export default function Checkout() {
                         </div>
                     </div>
 
+                    {/* CPF */}
                     <div className="space-y-2">
                         <Label htmlFor="cpfCnpj" className="text-gray-700 font-medium text-sm">CPF</Label>
                         <div className="relative">
@@ -267,7 +291,7 @@ export default function Checkout() {
                         </div>
                     </div>
 
-                    {/* CAMPOS ESPECÍFICOS DO CARTÃO */}
+                    {/* CAMPOS DE CARTÃO (Só aparecem se for Crédito) */}
                     {paymentMethod === 'CREDIT_CARD' && (
                         <div className="space-y-5 animate-in fade-in duration-300">
                             <div className="space-y-2">
@@ -329,7 +353,6 @@ export default function Checkout() {
                         </div>
                     )}
 
-                    {/* BOTÃO DE CONFIRMAÇÃO */}
                     <Button 
                         type="submit" 
                         className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-700 mt-4 shadow-lg shadow-green-200 transition-all hover:scale-[1.01]"
@@ -340,7 +363,7 @@ export default function Checkout() {
 
                 </form>
             ) : (
-                /* --- TELA DE SUCESSO PIX (QR CODE) --- */
+                /* --- TELA DE SUCESSO PIX --- */
                 <div className="flex flex-col items-center justify-center space-y-6 animate-in zoom-in duration-300 py-4">
                     <div className="text-center">
                         <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
@@ -349,7 +372,6 @@ export default function Checkout() {
                     </div>
 
                     <div className="border-4 border-green-600 p-2 rounded-xl bg-white">
-                        {/* AQUI É ONDE O QR CODE DO ASAAS APARECE */}
                         {pixData.qrCodeBase64 ? (
                             <img 
                                 src={`data:image/png;base64,${pixData.qrCodeBase64}`} 
