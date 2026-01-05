@@ -59,7 +59,7 @@ export default function Checkout() {
     e.preventDefault();
     setLoading(true);
 
-    const N8N_WEBHOOK_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/pagamento-unificado";
+    const N8N_WEBHOOK_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/venda-site";
 
     try {
       // O payload agora vai completo com endereço e telefone
