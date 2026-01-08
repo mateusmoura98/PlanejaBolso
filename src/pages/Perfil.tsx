@@ -43,7 +43,7 @@ export default function Perfil() {
   const [subscription, setSubscription] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);
   
-  // ⚠️ IMPORTANTE: COLOQUE AQUI A URL DE PRODUÇÃO DO SEU WEBHOOK N8N (InfoAssinatura)
+  // URL DO SEU WEBHOOK N8N (DE PRODUÇÃO)
   const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/assinatura/info"; 
 
   useEffect(() => {
@@ -55,12 +55,11 @@ export default function Perfil() {
   // Busca dados da assinatura quando o ID do cliente estiver disponível
   useEffect(() => {
     async function fetchSubscription() {
-      // Se não tiver ID do Asaas, nem tenta buscar para evitar erro
+      // Se não tiver ID do Asaas, não busca
       if (!profile?.stripe_customer_id) return; 
       
       setLoadingSub(true);
       try {
-        // Envia o ID do cliente como parâmetro na URL
         const response = await fetch(`${N8N_INFO_URL}?customerId=${profile.stripe_customer_id}`);
         const data = await response.json();
         
@@ -424,47 +423,60 @@ export default function Perfil() {
             <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-green-600" /></div>
           ) : (
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm animate-in fade-in">
-              <h3 className="text-lg font-bold mb-4 text-gray-900">Sua Assinatura</h3>
+              <h3 className="text-lg font-bold mb-6 text-gray-900">Informações da Assinatura</h3>
               
-              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                <div className="bg-green-100 p-3 rounded-full">
-                  <CreditCard className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900 text-lg">
-                    {/* Se a API trouxe dados, usa eles. Se não, usa o que tá no banco */}
-                    {subscription?.planName || (profile.plano_id === 2 ? "Plano Família" : "Plano Individual")}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    R$ {subscription?.value || (profile.plano_id === 2 ? "24,90" : "14,90")} / mês
-                  </p>
-                </div>
+              {/* --- BLOCO DE DADOS IGUAL AO VÍDEO --- */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                 <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Data da Assinatura</p>
+                    <p className="font-bold text-gray-900 mt-1 text-sm">{subscription?.dateCreated || "Recente"}</p>
+                 </div>
+                 <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Ciclo</p>
+                    <p className="font-bold text-gray-900 mt-1 text-sm">Mensal</p>
+                 </div>
+                 <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Valor</p>
+                    <p className="font-bold text-green-600 mt-1 text-lg">
+                        R$ {subscription?.value || (profile.plano_id === 2 ? "24,90" : "14,90")}
+                    </p>
+                 </div>
+                 <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Próximo Pagamento</p>
+                    <p className="font-bold text-gray-900 mt-1 text-sm">{subscription?.nextPaymentDate || "Em 30 dias"}</p>
+                 </div>
               </div>
 
-              {/* LÓGICA DO CARTÃO / PIX */}
-              {subscription?.creditCard ? (
-                <div className="mt-6 border-t border-gray-100 pt-4">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Forma de Pagamento</p>
-                  <div className="flex items-center gap-3">
-                    <span className="font-bold text-gray-700 capitalize text-lg">
-                      {subscription.creditCard.brand || "Cartão"}
-                    </span>
-                    <span className="text-gray-500 font-mono text-lg">•••• {subscription.creditCard.last4}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-6 border-t border-gray-100 pt-4">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Forma de Pagamento</p>
-                  <div className="flex items-center gap-3">
-                    <QrCode className="w-5 h-5 text-gray-500" />
-                    <span className="font-bold text-gray-700 text-lg">PIX ou Boleto</span>
-                  </div>
-                </div>
-              )}
+              {/* --- CARTÃO OU PIX --- */}
+              <div className="border-t border-gray-100 pt-6">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Método de Pagamento</p>
+                
+                {subscription?.creditCard ? (
+                    <div className="flex items-center gap-3">
+                        <CreditCard className="w-6 h-6 text-gray-700" />
+                        <div>
+                            <p className="font-bold text-gray-800 capitalize">
+                            {subscription.creditCard.brand} •••• {subscription.creditCard.last4}
+                            </p>
+                            <p className="text-xs text-gray-500">Cartão de Crédito</p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-3">
+                        <QrCode className="w-6 h-6 text-gray-700" />
+                        <div>
+                            <p className="font-bold text-gray-800">PIX ou Boleto</p>
+                            <p className="text-xs text-gray-500">Pagamento recorrente</p>
+                        </div>
+                    </div>
+                )}
+              </div>
               
-              <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between text-sm">
-                  <span className="text-gray-500">Status:</span>
-                  <span className="font-bold text-green-600 uppercase">{subscription?.status || "ATIVA"}</span>
+              <div className="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Status da assinatura:</span>
+                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">
+                      {subscription?.status || "ATIVA"}
+                  </span>
               </div>
             </div>
           )}
