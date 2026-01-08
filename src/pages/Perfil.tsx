@@ -44,7 +44,7 @@ export default function Perfil() {
   const [loadingSub, setLoadingSub] = useState(false);
   
   // URL DO SEU WEBHOOK N8N (JÁ ADICIONADA)
-  const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/assinatura/info"; 
+  const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/assinatura/info"; 
 
   useEffect(() => {
     if (user) {
