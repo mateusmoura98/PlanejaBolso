@@ -43,7 +43,7 @@ export default function Perfil() {
   const [subscription, setSubscription] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);
   
-  // URL DO SEU WEBHOOK N8N (JÁ ADICIONADA)
+  // ⚠️ IMPORTANTE: COLOQUE AQUI A URL DE PRODUÇÃO DO SEU WEBHOOK N8N (InfoAssinatura)
   const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/assinatura/info"; 
 
   useEffect(() => {
@@ -52,17 +52,22 @@ export default function Perfil() {
     }
   }, [user])
 
-  // Busca dados da assinatura
+  // Busca dados da assinatura quando o ID do cliente estiver disponível
   useEffect(() => {
     async function fetchSubscription() {
+      // Se não tiver ID do Asaas, nem tenta buscar para evitar erro
       if (!profile?.stripe_customer_id) return; 
       
       setLoadingSub(true);
       try {
+        // Envia o ID do cliente como parâmetro na URL
         const response = await fetch(`${N8N_INFO_URL}?customerId=${profile.stripe_customer_id}`);
         const data = await response.json();
+        
         if (data.success) {
           setSubscription(data);
+        } else {
+           console.warn("API de assinatura não retornou dados de sucesso.");
         }
       } catch (error) {
         console.error("Erro ao buscar assinatura:", error);
@@ -417,7 +422,7 @@ export default function Perfil() {
         <TabsContent value="subscription">
           {loadingSub ? (
             <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-green-600" /></div>
-          ) : subscription ? (
+          ) : (
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm animate-in fade-in">
               <h3 className="text-lg font-bold mb-4 text-gray-900">Sua Assinatura</h3>
               
@@ -427,23 +432,24 @@ export default function Perfil() {
                 </div>
                 <div>
                   <p className="font-bold text-gray-900 text-lg">
-                    {profile.plano_id === 2 ? "Plano Família" : "Plano Individual"}
+                    {/* Se a API trouxe dados, usa eles. Se não, usa o que tá no banco */}
+                    {subscription?.planName || (profile.plano_id === 2 ? "Plano Família" : "Plano Individual")}
                   </p>
                   <p className="text-sm text-gray-500">
-                    R$ {subscription.value || (profile.plano_id === 2 ? "24,90" : "14,90")} / mês
+                    R$ {subscription?.value || (profile.plano_id === 2 ? "24,90" : "14,90")} / mês
                   </p>
                 </div>
               </div>
 
-              {/* LÓGICA INTELIGENTE: CARTÃO OU PIX */}
-              {subscription.creditCard ? (
+              {/* LÓGICA DO CARTÃO / PIX */}
+              {subscription?.creditCard ? (
                 <div className="mt-6 border-t border-gray-100 pt-4">
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Forma de Pagamento</p>
                   <div className="flex items-center gap-3">
                     <span className="font-bold text-gray-700 capitalize text-lg">
-                      {subscription.creditCard.creditCardBrand || "Cartão"}
+                      {subscription.creditCard.brand || "Cartão"}
                     </span>
-                    <span className="text-gray-500 font-mono text-lg">•••• {subscription.creditCard.creditCardNumber}</span>
+                    <span className="text-gray-500 font-mono text-lg">•••• {subscription.creditCard.last4}</span>
                   </div>
                 </div>
               ) : (
@@ -451,23 +457,15 @@ export default function Perfil() {
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Forma de Pagamento</p>
                   <div className="flex items-center gap-3">
                     <QrCode className="w-5 h-5 text-gray-500" />
-                    <span className="font-bold text-gray-700 text-lg">PIX Recorrente</span>
+                    <span className="font-bold text-gray-700 text-lg">PIX ou Boleto</span>
                   </div>
                 </div>
               )}
               
               <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between text-sm">
                   <span className="text-gray-500">Status:</span>
-                  <span className="font-bold text-green-600 uppercase">{subscription.status || "ATIVA"}</span>
+                  <span className="font-bold text-green-600 uppercase">{subscription?.status || "ATIVA"}</span>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center p-8 text-gray-400 border border-dashed rounded-xl">
-                <CreditCard className="w-12 h-12 mb-2" />
-                <p>Você não possui uma assinatura ativa.</p>
-                <Button variant="link" onClick={() => navigate('/plano')} className="mt-2 text-green-600">
-                    Assinar agora
-                </Button>
             </div>
           )}
         </TabsContent>
@@ -485,7 +483,7 @@ export default function Perfil() {
             <CardContent>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  A remoção da conta é permanente e não pode ser desfeita.
+                  A remoção da conta é permanente e não pode ser desfeita. Todos os seus dados, incluindo transações e lembretes, serão permanentemente apagados.
                 </p>
                 
                 <AlertDialog>
