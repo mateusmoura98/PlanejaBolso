@@ -11,7 +11,11 @@ import { ChangePasswordForm } from '@/components/profile/ChangePasswordForm'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from '@/hooks/use-toast'
-import { Camera, User, Trash2, Settings, CreditCard, Shield, Loader2, QrCode } from 'lucide-react'
+// NOVOS ÍCONES ADICIONADOS AQUI
+import { 
+  Camera, User, Trash2, Settings, CreditCard, Shield, Loader2, QrCode, 
+  Calendar, DollarSign, RefreshCw, Activity, Clock 
+} from 'lucide-react'
 import { validateWhatsAppNumber } from '@/utils/whatsapp'
 import { useNavigate } from 'react-router-dom'
 
@@ -43,7 +47,7 @@ export default function Perfil() {
   const [subscription, setSubscription] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);
   
-  // URL DO SEU WEBHOOK N8N (DE PRODUÇÃO)
+  // URL DO SEU WEBHOOK N8N
   const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/assinatura/info"; 
 
   useEffect(() => {
@@ -52,10 +56,9 @@ export default function Perfil() {
     }
   }, [user])
 
-  // Busca dados da assinatura quando o ID do cliente estiver disponível
+  // Busca dados da assinatura
   useEffect(() => {
     async function fetchSubscription() {
-      // Se não tiver ID do Asaas, não busca
       if (!profile?.stripe_customer_id) return; 
       
       setLoadingSub(true);
@@ -420,63 +423,106 @@ export default function Perfil() {
 
         <TabsContent value="subscription">
           {loadingSub ? (
-            <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-green-600" /></div>
+            <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
           ) : (
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm animate-in fade-in">
-              <h3 className="text-lg font-bold mb-6 text-gray-900">Informações da Assinatura</h3>
+            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm animate-in fade-in">
+              <div className="flex items-center gap-3 mb-8">
+                <CreditCard className="w-6 h-6 text-gray-700" />
+                <h3 className="text-xl font-bold text-gray-900">Informações da Assinatura</h3>
+              </div>
               
-              {/* --- BLOCO DE DADOS IGUAL AO VÍDEO --- */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                 <div>
-                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Data da Assinatura</p>
-                    <p className="font-bold text-gray-900 mt-1 text-sm">{subscription?.dateCreated || "Recente"}</p>
+              {/* GRID DE INFORMAÇÕES */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12 mb-10">
+                 
+                 {/* DATA DA ASSINATURA */}
+                 <div className="flex items-start gap-3">
+                    <div className="mt-1"><Calendar className="w-5 h-5 text-gray-400" /></div>
+                    <div>
+                        <p className="text-sm text-gray-500 font-medium">Data da Assinatura</p>
+                        <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription?.dateCreated || "Recente"}</p>
+                    </div>
                  </div>
-                 <div>
-                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Ciclo</p>
-                    <p className="font-bold text-gray-900 mt-1 text-sm">Mensal</p>
+
+                 {/* CICLO */}
+                 <div className="flex items-start gap-3">
+                    <div className="mt-1"><RefreshCw className="w-5 h-5 text-gray-400" /></div>
+                    <div>
+                        <p className="text-sm text-gray-500 font-medium">Ciclo</p>
+                        <p className="text-lg font-bold text-gray-900 mt-0.5">Mensal</p>
+                    </div>
                  </div>
-                 <div>
-                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Valor</p>
-                    <p className="font-bold text-green-600 mt-1 text-lg">
-                        R$ {subscription?.value || (profile.plano_id === 2 ? "24,90" : "14,90")}
-                    </p>
+
+                 {/* VALOR */}
+                 <div className="flex items-start gap-3">
+                    <div className="mt-1"><DollarSign className="w-5 h-5 text-gray-400" /></div>
+                    <div>
+                        <p className="text-sm text-gray-500 font-medium">Valor</p>
+                        <p className="text-lg font-bold text-gray-900 mt-0.5">
+                            R$ {subscription?.value || (profile.plano_id === 2 ? "24,90" : "14,90")}
+                        </p>
+                    </div>
                  </div>
-                 <div>
-                    <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide">Próximo Pagamento</p>
-                    <p className="font-bold text-gray-900 mt-1 text-sm">{subscription?.nextPaymentDate || "Em 30 dias"}</p>
+
+                 {/* STATUS */}
+                 <div className="flex items-start gap-3">
+                    <div className="mt-1"><Activity className="w-5 h-5 text-gray-400" /></div>
+                    <div>
+                        <p className="text-sm text-gray-500 font-medium">Status</p>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-1 uppercase">
+                          {subscription?.status || "ATIVA"}
+                        </span>
+                    </div>
+                 </div>
+
+                 {/* PRÓXIMO PAGAMENTO */}
+                 <div className="flex items-start gap-3 md:col-span-2">
+                    <div className="mt-1"><Clock className="w-5 h-5 text-gray-400" /></div>
+                    <div>
+                        <p className="text-sm text-gray-500 font-medium">Próximo Pagamento</p>
+                        <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription?.nextPaymentDate || "Em 30 dias"}</p>
+                    </div>
                  </div>
               </div>
 
-              {/* --- CARTÃO OU PIX --- */}
-              <div className="border-t border-gray-100 pt-6">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Método de Pagamento</p>
+              <div className="border-t border-gray-100 my-6"></div>
+
+              {/* CARTÃO OU PIX */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                    <CreditCard className="w-5 h-5 text-gray-700" />
+                    <h4 className="font-semibold text-gray-900">Método de Pagamento</h4>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center gap-4">
+                    {subscription?.creditCard ? (
+                        <>
+                            <div className="bg-white p-2 rounded shadow-sm border border-gray-100">
+                                <CreditCard className="w-6 h-6 text-gray-800" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-gray-900 text-base capitalize">
+                                {subscription.creditCard.brand} •••• {subscription.creditCard.last4}
+                                </p>
+                                <p className="text-sm text-gray-500">Cartão de Crédito</p>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="bg-white p-2 rounded shadow-sm border border-gray-100">
+                                <QrCode className="w-6 h-6 text-gray-800" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-gray-900 text-base">PIX Recorrente</p>
+                                <p className="text-sm text-gray-500">Pagamento via Código QR</p>
+                            </div>
+                        </>
+                    )}
+                </div>
                 
-                {subscription?.creditCard ? (
-                    <div className="flex items-center gap-3">
-                        <CreditCard className="w-6 h-6 text-gray-700" />
-                        <div>
-                            <p className="font-bold text-gray-800 capitalize">
-                            {subscription.creditCard.brand} •••• {subscription.creditCard.last4}
-                            </p>
-                            <p className="text-xs text-gray-500">Cartão de Crédito</p>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="flex items-center gap-3">
-                        <QrCode className="w-6 h-6 text-gray-700" />
-                        <div>
-                            <p className="font-bold text-gray-800">PIX ou Boleto</p>
-                            <p className="text-xs text-gray-500">Pagamento recorrente</p>
-                        </div>
-                    </div>
-                )}
-              </div>
-              
-              <div className="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Status da assinatura:</span>
-                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">
-                      {subscription?.status || "ATIVA"}
-                  </span>
+                <p className="text-xs text-gray-400 mt-4 font-mono">
+                    ID da Assinatura: {profile.stripe_customer_id || "..."}
+                </p>
+
               </div>
             </div>
           )}
