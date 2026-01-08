@@ -11,7 +11,7 @@ import { ChangePasswordForm } from '@/components/profile/ChangePasswordForm'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from '@/hooks/use-toast'
-import { Camera, User, Trash2, Settings, CreditCard, Shield, Loader2 } from 'lucide-react'
+import { Camera, User, Trash2, Settings, CreditCard, Shield, Loader2, QrCode } from 'lucide-react'
 import { validateWhatsAppNumber } from '@/utils/whatsapp'
 import { useNavigate } from 'react-router-dom'
 
@@ -20,8 +20,8 @@ interface Profile {
   phone: string
   whatsapp?: string
   avatar_url?: string
-  stripe_customer_id?: string // Adicionei isso
-  plano_id?: number // Adicionei isso
+  stripe_customer_id?: string
+  plano_id?: number
 }
 
 export default function Perfil() {
@@ -42,8 +42,9 @@ export default function Perfil() {
   // --- ESTADOS PARA A ASSINATURA ---
   const [subscription, setSubscription] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);
-  // COLOQUE AQUI A URL DO SEU WEBHOOK INFOASSINATURA (DO N8N)
-  const N8N_INFO_URL = "SUA_URL_DO_WEBHOOK_INFO_ASSINATURA"; 
+  
+  // URL DO SEU WEBHOOK N8N (JÁ ADICIONADA)
+  const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/assinatura/info"; 
 
   useEffect(() => {
     if (user) {
@@ -51,7 +52,7 @@ export default function Perfil() {
     }
   }, [user])
 
-  // Busca dados da assinatura quando o perfil carrega
+  // Busca dados da assinatura
   useEffect(() => {
     async function fetchSubscription() {
       if (!profile?.stripe_customer_id) return; 
@@ -80,7 +81,7 @@ export default function Perfil() {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('nome, phone, whatsapp, avatar_url, stripe_customer_id, plano_id') // Adicionei os campos novos
+        .select('nome, phone, whatsapp, avatar_url, stripe_customer_id, plano_id')
         .eq('id', user?.id)
         .single()
 
@@ -159,8 +160,7 @@ export default function Perfil() {
             
             whatsappId = whatsappValidation.whatsappId
           } catch (error: any) {
-            console.error(error); // Apenas loga o erro, não bloqueia
-            // Assume que é válido se a API falhar, pra não travar o usuário
+            console.error(error); 
             whatsappId = fullPhone.replace('+', '') + '@s.whatsapp.net';
           }
         }
@@ -415,7 +415,6 @@ export default function Perfil() {
         </TabsContent>
 
         <TabsContent value="subscription">
-          {/* AQUI ESTÁ A NOVA LÓGICA DA ASSINATURA */}
           {loadingSub ? (
             <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-green-600" /></div>
           ) : subscription ? (
@@ -436,7 +435,8 @@ export default function Perfil() {
                 </div>
               </div>
 
-              {subscription.creditCard && (
+              {/* LÓGICA INTELIGENTE: CARTÃO OU PIX */}
+              {subscription.creditCard ? (
                 <div className="mt-6 border-t border-gray-100 pt-4">
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Forma de Pagamento</p>
                   <div className="flex items-center gap-3">
@@ -444,6 +444,14 @@ export default function Perfil() {
                       {subscription.creditCard.creditCardBrand || "Cartão"}
                     </span>
                     <span className="text-gray-500 font-mono text-lg">•••• {subscription.creditCard.creditCardNumber}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-6 border-t border-gray-100 pt-4">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Forma de Pagamento</p>
+                  <div className="flex items-center gap-3">
+                    <QrCode className="w-5 h-5 text-gray-500" />
+                    <span className="font-bold text-gray-700 text-lg">PIX Recorrente</span>
                   </div>
                 </div>
               )}
@@ -456,7 +464,7 @@ export default function Perfil() {
           ) : (
             <div className="flex flex-col items-center justify-center p-8 text-gray-400 border border-dashed rounded-xl">
                 <CreditCard className="w-12 h-12 mb-2" />
-                <p>Você não possui uma assinatura ativa ou não conseguimos carregar os dados.</p>
+                <p>Você não possui uma assinatura ativa.</p>
                 <Button variant="link" onClick={() => navigate('/plano')} className="mt-2 text-green-600">
                     Assinar agora
                 </Button>
@@ -477,7 +485,7 @@ export default function Perfil() {
             <CardContent>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  A remoção da conta é permanente e não pode ser desfeita. Todos os seus dados, incluindo transações e lembretes, serão permanentemente apagados.
+                  A remoção da conta é permanente e não pode ser desfeita.
                 </p>
                 
                 <AlertDialog>
