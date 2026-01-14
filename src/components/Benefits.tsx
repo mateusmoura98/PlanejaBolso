@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom"; // Import do Link
 
 const Benefits = () => {
   return (
@@ -13,20 +14,27 @@ const Benefits = () => {
           suas finanças.
         </p>
 
-        <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
-          <Button variant="secondary" size="lg" className="group mb-6">
-            Experimente Planeja Bolso Gratuitamente!
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        {/* LINK DIRETO PARA O CHECKOUT */}
+        <Link 
+          to="/checkout" 
+          state={{ plan: { name: "Individual", value: "14,90" } }}
+        >
+          <Button 
+            size="xl" 
+            className="group mb-6 bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+          >
+            Experimente Planeja Bolso — 3 dias grátis!
+            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
-        </a>
+        </Link>
 
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-success" />
+            <CheckCircle2 className="w-5 h-5 text-primary" />
             <span>3 dias grátis</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-success" />
+            <CheckCircle2 className="w-5 h-5 text-primary" />
             <span>Cancele quando quiser</span>
           </div>
         </div>
