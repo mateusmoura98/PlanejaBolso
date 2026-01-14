@@ -9,7 +9,7 @@ const Hero = () => {
         
         <div className="space-y-8 flex flex-col items-center">
           
-          {/* TÍTULO CORRIGIDO AQUI EMBAIXO */}
+          {/* TÍTULO */}
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
             Gestão financeira simplificada com{" "}
             <span className="text-primary">WhatsApp e Inteligência Artificial</span>
@@ -24,16 +24,16 @@ const Hero = () => {
             </p>
           </div>
 
-          {/* BOTÃO */}
+          {/* BOTÃO - Link Atualizado para /plano */}
           <div className="space-y-6 w-full flex flex-col items-center">
-            <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
+            <Link to="/plano">
               <Button 
                 size="xl" 
                 className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
               >
                 Experimente Planeja Bolso — 3 dias grátis!
               </Button>
-            </a>
+            </Link>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
