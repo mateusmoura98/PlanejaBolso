@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+
 const Hero = () => {
   return <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-background to-muted/30 overflow-x-hidden">
       <div className="container mx-auto max-w-4xl text-center">
@@ -21,18 +21,12 @@ Você conversa, registra gastos e receitas, e o sistema organiza tudo de forma s
           </div>
 
           <div className="space-y-6 w-full flex flex-col items-center">
-            {/* LINK DIRETO PARA O CHECKOUT */}
-            <Link to="/checkout" state={{
-            plan: {
-              name: "Individual",
-              value: "14,90"
-            }
-          }} // Define o padrão
-          >
-              <Button size="xl" className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all">
+            {/* LINK EXTERNO PARA O PLANO */}
+            <Button asChild size="xl" className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all">
+              <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
                 Experimente Planeja Bolso — 3 dias grátis!
-              </Button>
-            </Link>
+              </a>
+            </Button>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">

@@ -246,6 +246,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_user_account: { Args: never; Returns: undefined }
       entrar_na_familia: {
         Args: { p_codigo: string; p_userid: string }
         Returns: string

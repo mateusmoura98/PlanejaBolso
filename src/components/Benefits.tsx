@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom"; // Import do Link
 
 const Benefits = () => {
   return (
@@ -14,19 +13,17 @@ const Benefits = () => {
           suas finanças.
         </p>
 
-        {/* LINK DIRETO PARA O CHECKOUT */}
-        <Link 
-          to="/checkout" 
-          state={{ plan: { name: "Individual", value: "14,90" } }}
+        {/* LINK EXTERNO PARA O PLANO */}
+        <Button 
+          asChild
+          size="xl" 
+          className="group mb-6 bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
         >
-          <Button 
-            size="xl" 
-            className="group mb-6 bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
-          >
+          <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
             Experimente Planeja Bolso — 3 dias grátis!
             <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </Link>
+          </a>
+        </Button>
 
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
