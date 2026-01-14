@@ -18,7 +18,7 @@ const Footer = () => {
               />
             </div>
             <p className="text-sm text-background/70">
-              © 2025 Planeja Bolso. Todos os direitos reservados.
+              © 2026 Planeja Bolso. Todos os direitos reservados.
             </p>
           </div>
 
@@ -27,14 +27,14 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Contato</h3>
             <div className="space-y-3 text-sm">
               <a
-                href="tel:+5511999999999"
+                href="tel:+5511983561511"
                 className="flex items-center gap-2 text-background/70 hover:text-background transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                <span>(11) 99999-9999</span>
+                <span>(71) 98356-1511</span>
               </a>
               <a
-                href="mailto:contato@planejabolso.com.br"
+                href="mailto:planejabolso@gmail.com"
                 className="flex items-center gap-2 text-background/70 hover:text-background transition-colors"
               >
                 <Mail className="w-4 h-4" />
@@ -88,7 +88,7 @@ const Footer = () => {
             >
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
             </svg>
-            <span>Pagamentos seguros via Stripe</span>
+            <span>Pagamentos seguros via Asaas</span>
           </div>
         </div>
       </div>
