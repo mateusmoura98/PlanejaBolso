@@ -38,7 +38,7 @@ const Footer = () => {
                 className="flex items-center gap-2 text-background/70 hover:text-background transition-colors"
               >
                 <Mail className="w-4 h-4" />
-                <span>contato@planejabolso.com.br</span>
+                <span>planejabolso@gmail.com</span>
               </a>
               <a
                 href="https://instagram.com/planejabolso"
