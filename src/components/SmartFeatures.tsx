@@ -88,4 +88,4 @@ const SmartFeatures = () => {
   );
 };
 
-e
+export default SmartFeatures;
