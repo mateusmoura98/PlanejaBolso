@@ -1,21 +1,11 @@
 import { ShieldCheck, Zap, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-// Usar <a> para âncora é mais simples nesse caso, mas se preferir função:
 import { Link } from "react-router-dom";
 
 // VÍDEO DA MOÇA (DEMO)
 const videoPath = "/video-demo.mp4"; 
 
 const SmartFeatures = () => {
-  
-  // Função para rolar até os planos suavemente
-  const scrollToPlans = () => {
-    const element = document.getElementById('planos');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <section id="funcionalidades" className="py-20 bg-gray-50 overflow-hidden">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -73,15 +63,20 @@ const SmartFeatures = () => {
               </div>
             </div>
 
-            {/* BOTÃO VERDE - Rola para Planos */}
+            {/* BOTÃO VERDE - VAI DIRETO PRO CHECKOUT */}
             <div className="mt-10 w-full flex justify-center">
-              <Button 
-                onClick={scrollToPlans} // Ação de rolar
-                size="xl" 
-                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+              <Link 
+                to="/checkout" 
+                state={{ plan: { name: "Individual", value: "14,90" } }} // Define o padrão
+                className="w-full sm:w-auto flex justify-center"
               >
-                Experimente Planeja Bolso — 3 dias grátis!
-              </Button>
+                <Button 
+                  size="xl" 
+                  className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+                >
+                  Experimente Planeja Bolso — 3 dias grátis!
+                </Button>
+              </Link>
             </div>
 
           </div>
@@ -93,4 +88,4 @@ const SmartFeatures = () => {
   );
 };
 
-export default SmartFeatures;
+e
