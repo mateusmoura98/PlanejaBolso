@@ -11,10 +11,9 @@ import { ChangePasswordForm } from '@/components/profile/ChangePasswordForm'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from '@/hooks/use-toast'
-// NOVOS ÍCONES ADICIONADOS AQUI
 import { 
-  Camera, User, Trash2, Settings, CreditCard, Shield, Loader2, QrCode, 
-  Calendar, DollarSign, RefreshCw, Activity, Clock 
+  Camera, User, Trash2, Shield, Loader2, QrCode, 
+  Calendar, DollarSign, RefreshCw, Activity, Clock, CreditCard
 } from 'lucide-react'
 import { validateWhatsAppNumber } from '@/utils/whatsapp'
 import { useNavigate } from 'react-router-dom'
@@ -42,12 +41,10 @@ export default function Perfil() {
   const [uploading, setUploading] = useState(false)
   const [confirmEmail, setConfirmEmail] = useState('')
   const [deleting, setDeleting] = useState(false)
-
-  // --- ESTADOS PARA A ASSINATURA ---
+  
+  // Estados para Assinatura
   const [subscription, setSubscription] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);
-  
-  // URL DO SEU WEBHOOK N8N
   const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/assinatura/info"; 
 
   useEffect(() => {
@@ -56,7 +53,6 @@ export default function Perfil() {
     }
   }, [user])
 
-  // Busca dados da assinatura
   useEffect(() => {
     async function fetchSubscription() {
       if (!profile?.stripe_customer_id) return; 
@@ -68,8 +64,6 @@ export default function Perfil() {
         
         if (data.success) {
           setSubscription(data);
-        } else {
-           console.warn("API de assinatura não retornou dados de sucesso.");
         }
       } catch (error) {
         console.error("Erro ao buscar assinatura:", error);
@@ -82,7 +76,6 @@ export default function Perfil() {
         fetchSubscription();
     }
   }, [profile.stripe_customer_id]);
-
 
   const fetchProfile = async () => {
     try {
@@ -164,7 +157,6 @@ export default function Perfil() {
               setSaving(false)
               return
             }
-            
             whatsappId = whatsappValidation.whatsappId
           } catch (error: any) {
             console.error(error); 
@@ -187,7 +179,6 @@ export default function Perfil() {
       if (error) throw error
       
       setProfile(prev => ({ ...prev, phone: fullPhone, whatsapp: whatsappId }))
-      
       toast({ title: "Perfil atualizado com sucesso!" })
     } catch (error: any) {
       toast({
@@ -203,11 +194,9 @@ export default function Perfil() {
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true)
-      
       if (!event.target.files || event.target.files.length === 0) {
         throw new Error('Você deve selecionar uma imagem para fazer upload.')
       }
-
       const file = event.target.files[0]
       const fileExt = file.name.split('.').pop()
       const fileName = `avatar-${user?.id}-${Math.random()}.${fileExt}`
@@ -216,16 +205,13 @@ export default function Perfil() {
         .from('avatars')
         .upload(fileName, file)
 
-      if (uploadError) {
-        throw uploadError
-      }
+      if (uploadError) throw uploadError
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(fileName)
 
       setProfile(prev => ({ ...prev, avatar_url: publicUrl }))
-      
       toast({ title: "Avatar atualizado com sucesso!" })
     } catch (error: any) {
       toast({
@@ -239,22 +225,13 @@ export default function Perfil() {
   }
 
   const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
   }
 
-  const handlePhoneChange = (phone: string) => {
-    setCurrentPhoneNumber(phone)
-  }
+  const handlePhoneChange = (phone: string) => setCurrentPhoneNumber(phone)
+  const handleCountryChange = (country_code: string) => setCurrentCountryCode(country_code)
 
-  const handleCountryChange = (country_code: string) => {
-    setCurrentCountryCode(country_code)
-  }
-
+  // --- FUNÇÃO DE DELETAR ATUALIZADA (O Pulo do Gato) ---
   const handleDeleteAccount = async () => {
     if (confirmEmail !== user?.email) {
       toast({
@@ -268,36 +245,22 @@ export default function Perfil() {
     setDeleting(true)
 
     try {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user?.id)
+      // Chama a função RPC segura no banco de dados
+      const { error } = await supabase.rpc('delete_user_account')
 
-      if (profileError) throw profileError
-
-      const { error: transacoesError } = await supabase
-        .from('transacoes')
-        .delete()
-        .eq('userId', user?.id)
-
-      if (transacoesError) throw transacoesError
-
-      const { error: lembretesError } = await supabase
-        .from('lembretes')
-        .delete()
-        .eq('userId', user?.id)
-
-      if (lembretesError) throw lembretesError
+      if (error) throw error
 
       toast({
         title: "Conta removida com sucesso",
         description: "Sua conta e todos os dados foram permanentemente removidos",
       })
 
-      await signOut()
-      navigate('/auth')
+      // Desloga e redireciona forçadamente
+      await supabase.auth.signOut()
+      window.location.href = '/' // Redireciona para a home/login
+      
     } catch (error: any) {
-      console.error('Erro completo ao remover conta:', error)
+      console.error('Erro ao remover conta:', error)
       toast({
         title: "Erro ao remover conta",
         description: error.message,
@@ -395,7 +358,6 @@ export default function Perfil() {
                       required
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="phone">Telefone</Label>
                     <PhoneInput
@@ -408,12 +370,7 @@ export default function Perfil() {
                     />
                   </div>
                 </div>
-
-                <Button 
-                  type="submit" 
-                  disabled={saving}
-                  className="w-full md:w-auto"
-                >
+                <Button type="submit" disabled={saving} className="w-full md:w-auto">
                   {saving ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>
               </form>
@@ -430,11 +387,7 @@ export default function Perfil() {
                 <CreditCard className="w-6 h-6 text-gray-700" />
                 <h3 className="text-xl font-bold text-gray-900">Informações da Assinatura</h3>
               </div>
-              
-              {/* GRID DE INFORMAÇÕES */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12 mb-10">
-                 
-                 {/* DATA DA ASSINATURA */}
                  <div className="flex items-start gap-3">
                     <div className="mt-1"><Calendar className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -442,8 +395,6 @@ export default function Perfil() {
                         <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription?.dateCreated || "Recente"}</p>
                     </div>
                  </div>
-
-                 {/* CICLO */}
                  <div className="flex items-start gap-3">
                     <div className="mt-1"><RefreshCw className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -451,8 +402,6 @@ export default function Perfil() {
                         <p className="text-lg font-bold text-gray-900 mt-0.5">Mensal</p>
                     </div>
                  </div>
-
-                 {/* VALOR */}
                  <div className="flex items-start gap-3">
                     <div className="mt-1"><DollarSign className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -462,8 +411,6 @@ export default function Perfil() {
                         </p>
                     </div>
                  </div>
-
-                 {/* STATUS */}
                  <div className="flex items-start gap-3">
                     <div className="mt-1"><Activity className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -473,8 +420,6 @@ export default function Perfil() {
                         </span>
                     </div>
                  </div>
-
-                 {/* PRÓXIMO PAGAMENTO */}
                  <div className="flex items-start gap-3 md:col-span-2">
                     <div className="mt-1"><Clock className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -483,16 +428,12 @@ export default function Perfil() {
                     </div>
                  </div>
               </div>
-
               <div className="border-t border-gray-100 my-6"></div>
-
-              {/* CARTÃO OU PIX */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
                     <CreditCard className="w-5 h-5 text-gray-700" />
                     <h4 className="font-semibold text-gray-900">Método de Pagamento</h4>
                 </div>
-
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center gap-4">
                     {subscription?.creditCard ? (
                         <>
@@ -518,11 +459,9 @@ export default function Perfil() {
                         </>
                     )}
                 </div>
-                
                 <p className="text-xs text-gray-400 mt-4 font-mono">
                     ID da Assinatura: {profile.stripe_customer_id || "..."}
                 </p>
-
               </div>
             </div>
           )}
@@ -530,7 +469,6 @@ export default function Perfil() {
 
         <TabsContent value="security" className="space-y-6">
           <ChangePasswordForm />
-
           <Card className="border-destructive/20">
             <CardHeader>
               <CardTitle className="text-destructive flex items-center gap-2">
@@ -541,9 +479,8 @@ export default function Perfil() {
             <CardContent>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  A remoção da conta é permanente e não pode ser desfeita. Todos os seus dados, incluindo transações e lembretes, serão permanentemente apagados.
+                  A remoção da conta é permanente e não pode ser desfeita. Todos os seus dados serão permanentemente apagados.
                 </p>
-                
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full md:w-auto">
@@ -558,7 +495,6 @@ export default function Perfil() {
                         Esta ação é irreversível. Todos os seus dados serão permanentemente apagados.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="confirm-email">
@@ -573,11 +509,8 @@ export default function Perfil() {
                         />
                       </div>
                     </div>
-
                     <AlertDialogFooter>
-                      <AlertDialogCancel
-                        onClick={() => setConfirmEmail('')}
-                      >
+                      <AlertDialogCancel onClick={() => setConfirmEmail('')}>
                         Cancelar
                       </AlertDialogCancel>
                       <AlertDialogAction
