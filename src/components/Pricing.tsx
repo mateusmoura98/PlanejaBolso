@@ -13,7 +13,7 @@ const plans = [
       "Acesso Individual"
     ],
     highlight: false,
-    link: "https://sandbox.asaas.com/c/6jhf7jxup28v5a89" // Link Individual
+    link: "https://www.planejabolso.com/checkout" // Link Individual
   },
   {
     name: "Casal",
@@ -26,7 +26,7 @@ const plans = [
       "Suporte prioritário"
     ],
     highlight: true, // Destaque visual
-    link: "https://sandbox.asaas.com/c/g7auclkwrd421f3q" // Link Casal
+    link: "https://www.planejabolso.com/checkout" // Link Casal
   }
 ];
 
