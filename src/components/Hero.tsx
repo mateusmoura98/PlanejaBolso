@@ -9,13 +9,11 @@ const Hero = () => {
         
         <div className="space-y-8 flex flex-col items-center">
           
-          {/* TÍTULO */}
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
             Gestão financeira simplificada com{" "}
             <span className="text-primary">WhatsApp e Inteligência Artificial</span>
           </h1>
 
-          {/* PROVA SOCIAL */}
           <div className="flex items-start gap-3 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-lg text-left">
             <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
             <p className="text-sm md:text-base text-muted-foreground">
@@ -24,9 +22,12 @@ const Hero = () => {
             </p>
           </div>
 
-          {/* BOTÃO - Link Atualizado para /plano */}
           <div className="space-y-6 w-full flex flex-col items-center">
-            <Link to="/plano">
+            {/* LINK DIRETO PARA O CHECKOUT */}
+            <Link 
+              to="/checkout" 
+              state={{ plan: { name: "Individual", value: "14,90" } }} // Define o padrão
+            >
               <Button 
                 size="xl" 
                 className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
