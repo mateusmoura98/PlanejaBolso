@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Users } from "lucide-react";
+
 const Hero = () => {
-  return <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-background to-muted/30 overflow-x-hidden">
+  return (
+    <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-background to-muted/30 overflow-x-hidden">
       <div className="container mx-auto max-w-4xl text-center">
         
         <div className="space-y-8 flex flex-col items-center">
@@ -13,8 +15,8 @@ const Hero = () => {
 
           <div className="flex items-start gap-3 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-lg text-left">
             <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-            <p className="text-sm md:text-base text-muted-foreground">O Planeja Bolso é um agente financeiro que funciona direto no WhatsApp. Você conversa, registra gastos e receitas, e o sistema organiza tudo de forma simples e clara, sem baixar nada.<span className="font-semibold text-foreground">+28 mil pessoas</span> confiam no
-              Planeja Bolso para organizar suas finanças, e você?
+            <p className="text-sm md:text-base text-muted-foreground">
+              O Planeja Bolso é um agente financeiro que funciona direto no WhatsApp. Você conversa, registra gastos e receitas, e o sistema organiza tudo de forma simples e clara, sem baixar nada.
             </p>
           </div>
 
@@ -41,6 +43,8 @@ const Hero = () => {
         </div>
 
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default Hero;
