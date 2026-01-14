@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const plans = [
   {
@@ -13,10 +14,10 @@ const plans = [
       "Acesso Individual"
     ],
     highlight: false,
-    link: "https://www.planejabolso.com/checkout" // Link Individual
+    value: "14,90"
   },
   {
-    name: "Casal",
+    name: "Família (Dupla)",
     price: "24,90",
     description: "Para organizar a vida a dois",
     features: [
@@ -25,8 +26,8 @@ const plans = [
       "Gestão financeira compartilhada",
       "Suporte prioritário"
     ],
-    highlight: true, // Destaque visual
-    link: "https://www.planejabolso.com/checkout" // Link Casal
+    highlight: true,
+    value: "24,90"
   }
 ];
 
@@ -82,17 +83,17 @@ const Pricing = () => {
                 ))}
               </ul>
 
-              <a href={plan.link} target="_blank" rel="noreferrer">
+              {/* BOTÃO RÁPIDO PARA O CHECKOUT */}
+              <Link 
+                to="/checkout" 
+                state={{ plan: { name: plan.name, value: plan.value } }}
+              >
                 <Button 
-                  className={`w-full h-14 text-lg font-bold rounded-full transition-all shadow-lg hover:shadow-xl ${
-                    plan.highlight 
-                      ? "bg-primary hover:bg-primary/90 text-white" 
-                      : "bg-primary hover:bg-primary/90 text-white" // Ambos verdes agora
-                  }`}
+                  className={`w-full h-14 text-lg font-bold rounded-full transition-all shadow-lg hover:shadow-xl bg-primary hover:bg-primary/90 text-white`}
                 >
                   Assinar {plan.name}
                 </Button>
-              </a>
+              </Link>
             </div>
           ))}
         </div>
