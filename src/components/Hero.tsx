@@ -20,11 +20,15 @@ const Hero = () => {
             </p>
           </div>
 
-          <div className="space-y-6 w-full flex flex-col items-center">
+          <div className="space-y-6 w-full flex flex-col items-center px-4">
             {/* LINK EXTERNO PARA O PLANO */}
-            <Button asChild size="xl" className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all">
+            <Button 
+              asChild 
+              size="xl" 
+              className="w-full max-w-sm h-auto min-h-[60px] bg-primary hover:bg-primary/90 text-white font-bold text-lg px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all whitespace-normal text-center leading-tight"
+            >
               <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
-                Experimente Planeja Bolso — 3 dias grátis!
+                Experimente Planeja Bolso <br className="sm:hidden" /> — 3 dias grátis!
               </a>
             </Button>
 
