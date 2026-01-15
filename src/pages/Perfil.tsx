@@ -11,12 +11,10 @@ import { ChangePasswordForm } from '@/components/profile/ChangePasswordForm'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from '@/hooks/use-toast'
-// NOVOS ÍCONES ADICIONADOS AQUI
 import { 
-  Camera, User, Trash2, Settings, CreditCard, Shield, Loader2, QrCode, 
-  Calendar, DollarSign, RefreshCw, Activity, Clock 
+  Camera, User, Trash2, Shield, Loader2, QrCode, 
+  Calendar, DollarSign, RefreshCw, Activity, Clock, CreditCard
 } from 'lucide-react'
-import { validateWhatsAppNumber } from '@/utils/whatsapp'
 import { useNavigate } from 'react-router-dom'
 
 interface Profile {
@@ -149,28 +147,13 @@ export default function Perfil() {
       let whatsappId = profile.whatsapp
       
       if (currentPhoneNumber.trim()) {
+        // Formatação simples e segura: DDI + Números
         fullPhone = currentCountryCode + currentPhoneNumber.replace(/\D/g, '')
         
-        if (fullPhone !== profile.phone) {
-          try {
-            const whatsappValidation = await validateWhatsAppNumber(fullPhone.replace('+', ''))
-            
-            if (!whatsappValidation.exists) {
-              toast({
-                title: "Erro",
-                description: "Este número não possui WhatsApp ativo",
-                variant: "destructive",
-              })
-              setSaving(false)
-              return
-            }
-            
-            whatsappId = whatsappValidation.whatsappId
-          } catch (error: any) {
-            console.error(error); 
-            whatsappId = fullPhone.replace('+', '') + '@s.whatsapp.net';
-          }
-        }
+        // Gera o ID do WhatsApp automaticamente (Formato: 551199999999@s.whatsapp.net)
+        // Isso remove a necessidade da validação externa que estava falhando
+        const numbersOnly = fullPhone.replace('+', '')
+        whatsappId = `${numbersOnly}@s.whatsapp.net`
       }
 
       const { error } = await supabase
@@ -190,9 +173,10 @@ export default function Perfil() {
       
       toast({ title: "Perfil atualizado com sucesso!" })
     } catch (error: any) {
+      console.error(error)
       toast({
         title: "Erro ao atualizar perfil",
-        description: error.message,
+        description: "Verifique se este número já não está em uso por outra conta.",
         variant: "destructive",
       })
     } finally {
@@ -255,6 +239,7 @@ export default function Perfil() {
     setCurrentCountryCode(country_code)
   }
 
+  // --- FUNÇÃO DE DELETAR CONTA (VIA BANCO DE DADOS) ---
   const handleDeleteAccount = async () => {
     if (confirmEmail !== user?.email) {
       toast({
@@ -268,39 +253,25 @@ export default function Perfil() {
     setDeleting(true)
 
     try {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user?.id)
+      // Chama a função RPC do banco que apaga tudo (inclusive auth.users)
+      const { error } = await supabase.rpc('delete_user_account')
 
-      if (profileError) throw profileError
-
-      const { error: transacoesError } = await supabase
-        .from('transacoes')
-        .delete()
-        .eq('userId', user?.id)
-
-      if (transacoesError) throw transacoesError
-
-      const { error: lembretesError } = await supabase
-        .from('lembretes')
-        .delete()
-        .eq('userId', user?.id)
-
-      if (lembretesError) throw lembretesError
+      if (error) throw error
 
       toast({
         title: "Conta removida com sucesso",
         description: "Sua conta e todos os dados foram permanentemente removidos",
       })
 
-      await signOut()
-      navigate('/auth')
+      // Força o logout e redirecionamento
+      await supabase.auth.signOut()
+      window.location.href = '/'
+      
     } catch (error: any) {
-      console.error('Erro completo ao remover conta:', error)
+      console.error('Erro ao remover conta:', error)
       toast({
         title: "Erro ao remover conta",
-        description: error.message,
+        description: error.message || "Tente novamente mais tarde.",
         variant: "destructive",
       })
     } finally {
@@ -421,6 +392,7 @@ export default function Perfil() {
           </Card>
         </TabsContent>
 
+        {/* ... (O resto do arquivo - TabsContent de subscription e security - continua igual) ... */}
         <TabsContent value="subscription">
           {loadingSub ? (
             <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
@@ -430,11 +402,7 @@ export default function Perfil() {
                 <CreditCard className="w-6 h-6 text-gray-700" />
                 <h3 className="text-xl font-bold text-gray-900">Informações da Assinatura</h3>
               </div>
-              
-              {/* GRID DE INFORMAÇÕES */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12 mb-10">
-                 
-                 {/* DATA DA ASSINATURA */}
                  <div className="flex items-start gap-3">
                     <div className="mt-1"><Calendar className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -442,8 +410,6 @@ export default function Perfil() {
                         <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription?.dateCreated || "Recente"}</p>
                     </div>
                  </div>
-
-                 {/* CICLO */}
                  <div className="flex items-start gap-3">
                     <div className="mt-1"><RefreshCw className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -451,8 +417,6 @@ export default function Perfil() {
                         <p className="text-lg font-bold text-gray-900 mt-0.5">Mensal</p>
                     </div>
                  </div>
-
-                 {/* VALOR */}
                  <div className="flex items-start gap-3">
                     <div className="mt-1"><DollarSign className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -462,8 +426,6 @@ export default function Perfil() {
                         </p>
                     </div>
                  </div>
-
-                 {/* STATUS */}
                  <div className="flex items-start gap-3">
                     <div className="mt-1"><Activity className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -473,8 +435,6 @@ export default function Perfil() {
                         </span>
                     </div>
                  </div>
-
-                 {/* PRÓXIMO PAGAMENTO */}
                  <div className="flex items-start gap-3 md:col-span-2">
                     <div className="mt-1"><Clock className="w-5 h-5 text-gray-400" /></div>
                     <div>
@@ -483,16 +443,12 @@ export default function Perfil() {
                     </div>
                  </div>
               </div>
-
               <div className="border-t border-gray-100 my-6"></div>
-
-              {/* CARTÃO OU PIX */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
                     <CreditCard className="w-5 h-5 text-gray-700" />
                     <h4 className="font-semibold text-gray-900">Método de Pagamento</h4>
                 </div>
-
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center gap-4">
                     {subscription?.creditCard ? (
                         <>
@@ -518,11 +474,9 @@ export default function Perfil() {
                         </>
                     )}
                 </div>
-                
                 <p className="text-xs text-gray-400 mt-4 font-mono">
                     ID da Assinatura: {profile.stripe_customer_id || "..."}
                 </p>
-
               </div>
             </div>
           )}
