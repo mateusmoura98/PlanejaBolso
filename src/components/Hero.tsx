@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -16,21 +17,24 @@ const Hero = () => {
           <div className="flex items-start gap-3 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-lg text-left">
             <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
             <p className="text-sm md:text-base text-muted-foreground">
-              O Planeja Bolso é um agente financeiro que funciona direto no WhatsApp. Você conversa, registra gastos e receitas, e o sistema organiza tudo de forma simples e clara, sem baixar nada.
+              <span className="font-semibold text-foreground">+28 mil pessoas</span> confiam no
+              Planeja Bolso para organizar suas finanças, e você?
             </p>
           </div>
 
-          <div className="space-y-6 w-full flex flex-col items-center px-4">
-            {/* LINK EXTERNO PARA O PLANO */}
-            <Button 
-              asChild 
-              size="xl" 
-              className="w-full max-w-sm h-auto min-h-[60px] bg-primary hover:bg-primary/90 text-white font-bold text-lg px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all whitespace-normal text-center leading-tight"
+          <div className="space-y-6 w-full flex flex-col items-center">
+            {/* LINK DIRETO PARA O CHECKOUT */}
+            <Link 
+              to="/checkout" 
+              state={{ plan: { name: "Individual", value: "14,90" } }} // Define o padrão
             >
-              <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
-                Experimente Planeja Bolso <br className="sm:hidden" /> — 3 dias grátis!
-              </a>
-            </Button>
+              <Button 
+                size="xl" 
+                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+              >
+                Experimente Planeja Bolso — 3 dias grátis!
+              </Button>
+            </Link>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">

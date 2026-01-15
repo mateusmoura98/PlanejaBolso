@@ -1,5 +1,6 @@
 import { ShieldCheck, Zap, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 // VÍDEO DA MOÇA (DEMO)
 const videoPath = "/video-demo.mp4"; 
@@ -62,17 +63,20 @@ const SmartFeatures = () => {
               </div>
             </div>
 
-            {/* BOTÃO VERDE - VAI DIRETO PRO PLANO EXTERNO */}
+            {/* BOTÃO VERDE - VAI DIRETO PRO CHECKOUT */}
             <div className="mt-10 w-full flex justify-center">
-              <Button 
-                asChild
-                size="xl" 
-                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+              <Link 
+                to="/checkout" 
+                state={{ plan: { name: "Individual", value: "14,90" } }} // Define o padrão
+                className="w-full sm:w-auto flex justify-center"
               >
-                <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
+                <Button 
+                  size="xl" 
+                  className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+                >
                   Experimente Planeja Bolso — 3 dias grátis!
-                </a>
-              </Button>
+                </Button>
+              </Link>
             </div>
 
           </div>

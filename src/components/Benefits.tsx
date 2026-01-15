@@ -13,25 +13,20 @@ const Benefits = () => {
           suas finanças.
         </p>
 
-        {/* LINK EXTERNO PARA O PLANO */}
-        <Button 
-          asChild
-          size="xl" 
-          className="group mb-6 bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
-        >
-          <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
-            Experimente Planeja Bolso — 3 dias grátis!
-            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-          </a>
-        </Button>
+        <a href="https://www.planejabolso.com/plano" target="_blank" rel="noopener noreferrer">
+          <Button variant="secondary" size="lg" className="group mb-6">
+            Experimente Planeja Bolso Gratuitamente!
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </a>
 
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-primary" />
+            <CheckCircle2 className="w-5 h-5 text-success" />
             <span>3 dias grátis</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-primary" />
+            <CheckCircle2 className="w-5 h-5 text-success" />
             <span>Cancele quando quiser</span>
           </div>
         </div>
