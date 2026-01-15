@@ -24,7 +24,7 @@ const Benefits = () => {
             className="w-full sm:w-auto h-14 px-8 text-lg font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg transition-transform hover:scale-105"
           >
             <Link to="/checkout" className="flex items-center justify-center gap-2">
-              Experimente Planeja Bolso Gratuitamente!
+              Experimente Gratuitamente 3 dias!
               <ArrowRight className="w-5 h-5" />
             </Link>
           </Button>
