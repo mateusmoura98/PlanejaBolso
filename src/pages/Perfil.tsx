@@ -15,6 +15,7 @@ import {
   Camera, User, Trash2, Shield, Loader2, QrCode, 
   Calendar, DollarSign, RefreshCw, Activity, Clock, CreditCard
 } from 'lucide-react'
+import { validateWhatsAppNumber } from '@/utils/whatsapp'
 import { useNavigate } from 'react-router-dom'
 
 interface Profile {
@@ -45,8 +46,9 @@ export default function Perfil() {
   const [subscription, setSubscription] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);
   
-  // URL DO SEU WEBHOOK N8N
+  // URLs DOS WEBHOOKS N8N
   const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/assinatura/info"; 
+  const N8N_CANCEL_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/cancelar-conta"; // ATUALIZADO
 
   useEffect(() => {
     if (user) {
@@ -147,11 +149,7 @@ export default function Perfil() {
       let whatsappId = profile.whatsapp
       
       if (currentPhoneNumber.trim()) {
-        // Formatação simples e segura: DDI + Números
         fullPhone = currentCountryCode + currentPhoneNumber.replace(/\D/g, '')
-        
-        // Gera o ID do WhatsApp automaticamente (Formato: 551199999999@s.whatsapp.net)
-        // Isso remove a necessidade da validação externa que estava falhando
         const numbersOnly = fullPhone.replace('+', '')
         whatsappId = `${numbersOnly}@s.whatsapp.net`
       }
@@ -176,7 +174,7 @@ export default function Perfil() {
       console.error(error)
       toast({
         title: "Erro ao atualizar perfil",
-        description: "Verifique se este número já não está em uso por outra conta.",
+        description: "Verifique se este número já não está em uso.",
         variant: "destructive",
       })
     } finally {
@@ -187,11 +185,9 @@ export default function Perfil() {
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true)
-      
       if (!event.target.files || event.target.files.length === 0) {
         throw new Error('Você deve selecionar uma imagem para fazer upload.')
       }
-
       const file = event.target.files[0]
       const fileExt = file.name.split('.').pop()
       const fileName = `avatar-${user?.id}-${Math.random()}.${fileExt}`
@@ -200,16 +196,13 @@ export default function Perfil() {
         .from('avatars')
         .upload(fileName, file)
 
-      if (uploadError) {
-        throw uploadError
-      }
+      if (uploadError) throw uploadError
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(fileName)
 
       setProfile(prev => ({ ...prev, avatar_url: publicUrl }))
-      
       toast({ title: "Avatar atualizado com sucesso!" })
     } catch (error: any) {
       toast({
@@ -223,23 +216,13 @@ export default function Perfil() {
   }
 
   const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
   }
 
-  const handlePhoneChange = (phone: string) => {
-    setCurrentPhoneNumber(phone)
-  }
+  const handlePhoneChange = (phone: string) => setCurrentPhoneNumber(phone)
+  const handleCountryChange = (country_code: string) => setCurrentCountryCode(country_code)
 
-  const handleCountryChange = (country_code: string) => {
-    setCurrentCountryCode(country_code)
-  }
-
-  // --- FUNÇÃO DE DELETAR CONTA (VIA BANCO DE DADOS) ---
+  // --- FUNÇÃO DE DELETAR CONTA (VIA N8N - O PULO DO GATO) ---
   const handleDeleteAccount = async () => {
     if (confirmEmail !== user?.email) {
       toast({
@@ -253,17 +236,23 @@ export default function Perfil() {
     setDeleting(true)
 
     try {
-      // Chama a função RPC do banco que apaga tudo (inclusive auth.users)
-      const { error } = await supabase.rpc('delete_user_account')
+      // 1. Chama o n8n para cancelar no Asaas e apagar no Banco
+      const response = await fetch(N8N_CANCEL_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id })
+      });
 
-      if (error) throw error
+      if (!response.ok) {
+        throw new Error("Erro ao processar cancelamento.");
+      }
 
       toast({
         title: "Conta removida com sucesso",
-        description: "Sua conta e todos os dados foram permanentemente removidos",
+        description: "Sua conta e todas as cobranças foram canceladas.",
       })
 
-      // Força o logout e redirecionamento
+      // 2. Desloga e redireciona
       await supabase.auth.signOut()
       window.location.href = '/'
       
@@ -271,7 +260,7 @@ export default function Perfil() {
       console.error('Erro ao remover conta:', error)
       toast({
         title: "Erro ao remover conta",
-        description: error.message || "Tente novamente mais tarde.",
+        description: "Tente novamente ou contate o suporte.",
         variant: "destructive",
       })
     } finally {
@@ -366,7 +355,6 @@ export default function Perfil() {
                       required
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="phone">Telefone</Label>
                     <PhoneInput
@@ -379,12 +367,7 @@ export default function Perfil() {
                     />
                   </div>
                 </div>
-
-                <Button 
-                  type="submit" 
-                  disabled={saving}
-                  className="w-full md:w-auto"
-                >
+                <Button type="submit" disabled={saving} className="w-full md:w-auto">
                   {saving ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>
               </form>
@@ -392,7 +375,6 @@ export default function Perfil() {
           </Card>
         </TabsContent>
 
-        {/* ... (O resto do arquivo - TabsContent de subscription e security - continua igual) ... */}
         <TabsContent value="subscription">
           {loadingSub ? (
             <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
@@ -484,7 +466,6 @@ export default function Perfil() {
 
         <TabsContent value="security" className="space-y-6">
           <ChangePasswordForm />
-
           <Card className="border-destructive/20">
             <CardHeader>
               <CardTitle className="text-destructive flex items-center gap-2">
@@ -497,7 +478,6 @@ export default function Perfil() {
                 <p className="text-sm text-muted-foreground">
                   A remoção da conta é permanente e não pode ser desfeita. Todos os seus dados, incluindo transações e lembretes, serão permanentemente apagados.
                 </p>
-                
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full md:w-auto">
@@ -509,10 +489,9 @@ export default function Perfil() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Confirmar Remoção de Conta</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Esta ação é irreversível. Todos os seus dados serão permanentemente apagados.
+                        Esta ação é irreversível. Todos os seus dados serão permanentemente apagados e sua assinatura no banco será cancelada.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="confirm-email">
@@ -527,11 +506,8 @@ export default function Perfil() {
                         />
                       </div>
                     </div>
-
                     <AlertDialogFooter>
-                      <AlertDialogCancel
-                        onClick={() => setConfirmEmail('')}
-                      >
+                      <AlertDialogCancel onClick={() => setConfirmEmail('')}>
                         Cancelar
                       </AlertDialogCancel>
                       <AlertDialogAction
