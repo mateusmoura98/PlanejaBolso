@@ -17,7 +17,7 @@ const Hero = () => {
           <div className="flex items-start gap-3 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-lg text-left">
             <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
             <p className="text-sm md:text-base text-muted-foreground">
-              <span className="font-semibold text-foreground">+28 mil pessoas</span> confiam no
+              <span className="font-semibold text-foreground">Várias pessoas</span> confiam no
               Planeja Bolso para organizar suas finanças, e você?
             </p>
           </div>
