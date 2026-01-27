@@ -15,7 +15,6 @@ import {
   Camera, User, Trash2, Shield, Loader2, QrCode, 
   Calendar, DollarSign, RefreshCw, Activity, Clock, CreditCard
 } from 'lucide-react'
-import { validateWhatsAppNumber } from '@/utils/whatsapp'
 import { useNavigate } from 'react-router-dom'
 
 interface Profile {
@@ -46,9 +45,9 @@ export default function Perfil() {
   const [subscription, setSubscription] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);
   
-  // URLs DOS WEBHOOKS N8N
+  // URLs DOS WEBHOOKS N8N (Produção)
   const N8N_INFO_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/assinatura/info"; 
-  const N8N_CANCEL_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/cancelar-conta"; // ATUALIZADO
+  const N8N_CANCEL_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/cancelar-conta";
 
   useEffect(() => {
     if (user) {
@@ -56,20 +55,26 @@ export default function Perfil() {
     }
   }, [user])
 
-  // Busca dados da assinatura
+  // Busca dados da assinatura assim que tivermos o ID do cliente
   useEffect(() => {
     async function fetchSubscription() {
-      if (!profile?.stripe_customer_id) return; 
+      // Se não tiver ID de cliente, não busca nada (evita erro 400)
+      if (!profile?.stripe_customer_id) {
+          setLoadingSub(false);
+          return; 
+      }
       
       setLoadingSub(true);
       try {
+        // Chama o n8n passando o ID do cliente na URL
         const response = await fetch(`${N8N_INFO_URL}?customerId=${profile.stripe_customer_id}`);
         const data = await response.json();
         
         if (data.success) {
           setSubscription(data);
         } else {
-           console.warn("API de assinatura não retornou dados de sucesso.");
+           console.log("Sem assinatura ativa ou erro:", data.message);
+           setSubscription(null); // Limpa se não achar
         }
       } catch (error) {
         console.error("Erro ao buscar assinatura:", error);
@@ -151,7 +156,8 @@ export default function Perfil() {
       if (currentPhoneNumber.trim()) {
         fullPhone = currentCountryCode + currentPhoneNumber.replace(/\D/g, '')
         const numbersOnly = fullPhone.replace('+', '')
-        whatsappId = `${numbersOnly}@s.whatsapp.net`
+        // Se não tiver whatsappId definido, usa o numero como padrão
+        if (!whatsappId) whatsappId = `${numbersOnly}@s.whatsapp.net`
       }
 
       const { error } = await supabase
@@ -174,7 +180,7 @@ export default function Perfil() {
       console.error(error)
       toast({
         title: "Erro ao atualizar perfil",
-        description: "Verifique se este número já não está em uso.",
+        description: "Verifique os dados e tente novamente.",
         variant: "destructive",
       })
     } finally {
@@ -222,7 +228,6 @@ export default function Perfil() {
   const handlePhoneChange = (phone: string) => setCurrentPhoneNumber(phone)
   const handleCountryChange = (country_code: string) => setCurrentCountryCode(country_code)
 
-  // --- FUNÇÃO DE DELETAR CONTA (VIA N8N - O PULO DO GATO) ---
   const handleDeleteAccount = async () => {
     if (confirmEmail !== user?.email) {
       toast({
@@ -236,7 +241,6 @@ export default function Perfil() {
     setDeleting(true)
 
     try {
-      // 1. Chama o n8n para cancelar no Asaas e apagar no Banco
       const response = await fetch(N8N_CANCEL_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -252,7 +256,6 @@ export default function Perfil() {
         description: "Sua conta e todas as cobranças foram canceladas.",
       })
 
-      // 2. Desloga e redireciona
       await supabase.auth.signOut()
       window.location.href = '/'
       
@@ -384,82 +387,95 @@ export default function Perfil() {
                 <CreditCard className="w-6 h-6 text-gray-700" />
                 <h3 className="text-xl font-bold text-gray-900">Informações da Assinatura</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12 mb-10">
-                 <div className="flex items-start gap-3">
-                    <div className="mt-1"><Calendar className="w-5 h-5 text-gray-400" /></div>
-                    <div>
-                        <p className="text-sm text-gray-500 font-medium">Data da Assinatura</p>
-                        <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription?.dateCreated || "Recente"}</p>
+              
+              {/* Se tiver assinatura, mostra os dados. Se não, mostra aviso. */}
+              {subscription ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12 mb-10">
+                        <div className="flex items-start gap-3">
+                            <div className="mt-1"><Calendar className="w-5 h-5 text-gray-400" /></div>
+                            <div>
+                                <p className="text-sm text-gray-500 font-medium">Data da Assinatura</p>
+                                <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription.dateCreated || "Recente"}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <div className="mt-1"><RefreshCw className="w-5 h-5 text-gray-400" /></div>
+                            <div>
+                                <p className="text-sm text-gray-500 font-medium">Plano</p>
+                                <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription.planName || "Mensal"}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <div className="mt-1"><DollarSign className="w-5 h-5 text-gray-400" /></div>
+                            <div>
+                                <p className="text-sm text-gray-500 font-medium">Valor</p>
+                                <p className="text-lg font-bold text-gray-900 mt-0.5">
+                                    R$ {subscription.value}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <div className="mt-1"><Activity className="w-5 h-5 text-gray-400" /></div>
+                            <div>
+                                <p className="text-sm text-gray-500 font-medium">Status</p>
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1 uppercase ${subscription.status === 'ATIVA' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                {subscription.status}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3 md:col-span-2">
+                            <div className="mt-1"><Clock className="w-5 h-5 text-gray-400" /></div>
+                            <div>
+                                <p className="text-sm text-gray-500 font-medium">Próximo Pagamento</p>
+                                <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription.nextPaymentDate || "Em 30 dias"}</p>
+                            </div>
+                        </div>
                     </div>
-                 </div>
-                 <div className="flex items-start gap-3">
-                    <div className="mt-1"><RefreshCw className="w-5 h-5 text-gray-400" /></div>
+                    <div className="border-t border-gray-100 my-6"></div>
                     <div>
-                        <p className="text-sm text-gray-500 font-medium">Ciclo</p>
-                        <p className="text-lg font-bold text-gray-900 mt-0.5">Mensal</p>
-                    </div>
-                 </div>
-                 <div className="flex items-start gap-3">
-                    <div className="mt-1"><DollarSign className="w-5 h-5 text-gray-400" /></div>
-                    <div>
-                        <p className="text-sm text-gray-500 font-medium">Valor</p>
-                        <p className="text-lg font-bold text-gray-900 mt-0.5">
-                            R$ {subscription?.value || (profile.plano_id === 2 ? "24,90" : "14,90")}
+                        <div className="flex items-center gap-2 mb-4">
+                            <CreditCard className="w-5 h-5 text-gray-700" />
+                            <h4 className="font-semibold text-gray-900">Método de Pagamento</h4>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center gap-4">
+                            {subscription.creditCard ? (
+                                <>
+                                    <div className="bg-white p-2 rounded shadow-sm border border-gray-100">
+                                        <CreditCard className="w-6 h-6 text-gray-800" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-900 text-base capitalize">
+                                        {subscription.creditCard.brand} •••• {subscription.creditCard.last4}
+                                        </p>
+                                        <p className="text-sm text-gray-500">Cartão de Crédito</p>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="bg-white p-2 rounded shadow-sm border border-gray-100">
+                                        <QrCode className="w-6 h-6 text-gray-800" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-900 text-base">PIX</p>
+                                        <p className="text-sm text-gray-500">Pagamento via Código QR</p>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        <p className="text-xs text-gray-400 mt-4 font-mono">
+                            ID da Assinatura: {profile.stripe_customer_id || "..."}
                         </p>
                     </div>
-                 </div>
-                 <div className="flex items-start gap-3">
-                    <div className="mt-1"><Activity className="w-5 h-5 text-gray-400" /></div>
-                    <div>
-                        <p className="text-sm text-gray-500 font-medium">Status</p>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-1 uppercase">
-                          {subscription?.status || "ATIVA"}
-                        </span>
-                    </div>
-                 </div>
-                 <div className="flex items-start gap-3 md:col-span-2">
-                    <div className="mt-1"><Clock className="w-5 h-5 text-gray-400" /></div>
-                    <div>
-                        <p className="text-sm text-gray-500 font-medium">Próximo Pagamento</p>
-                        <p className="text-lg font-bold text-gray-900 mt-0.5">{subscription?.nextPaymentDate || "Em 30 dias"}</p>
-                    </div>
-                 </div>
-              </div>
-              <div className="border-t border-gray-100 my-6"></div>
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                    <CreditCard className="w-5 h-5 text-gray-700" />
-                    <h4 className="font-semibold text-gray-900">Método de Pagamento</h4>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center gap-4">
-                    {subscription?.creditCard ? (
-                        <>
-                            <div className="bg-white p-2 rounded shadow-sm border border-gray-100">
-                                <CreditCard className="w-6 h-6 text-gray-800" />
-                            </div>
-                            <div>
-                                <p className="font-bold text-gray-900 text-base capitalize">
-                                {subscription.creditCard.brand} •••• {subscription.creditCard.last4}
-                                </p>
-                                <p className="text-sm text-gray-500">Cartão de Crédito</p>
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <div className="bg-white p-2 rounded shadow-sm border border-gray-100">
-                                <QrCode className="w-6 h-6 text-gray-800" />
-                            </div>
-                            <div>
-                                <p className="font-bold text-gray-900 text-base">PIX Recorrente</p>
-                                <p className="text-sm text-gray-500">Pagamento via Código QR</p>
-                            </div>
-                        </>
-                    )}
-                </div>
-                <p className="text-xs text-gray-400 mt-4 font-mono">
-                    ID da Assinatura: {profile.stripe_customer_id || "..."}
-                </p>
-              </div>
+                  </>
+              ) : (
+                  <div className="text-center py-10">
+                      <p className="text-gray-500">Nenhuma assinatura ativa encontrada.</p>
+                      <Button variant="outline" className="mt-4" onClick={() => navigate('/planos')}>
+                          Contratar Plano
+                      </Button>
+                  </div>
+              )}
             </div>
           )}
         </TabsContent>
