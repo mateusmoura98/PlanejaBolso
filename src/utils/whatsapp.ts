@@ -1,36 +1,27 @@
+// src/utils/whatsapp.ts
 
-interface WhatsAppValidationResponse {
-  exists: string;
-  whatsapp: string;
-}
+export const validateWhatsAppNumber = async (phone: string) => {
+  // URL DE PRODUÇÃO DO SEU N8N
+  const N8N_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/verifica-zap";
 
-export async function validateWhatsAppNumber(phoneNumber: string): Promise<{ exists: boolean; whatsappId?: string }> {
   try {
-    const credentials = btoa('planejabolso:130299moura');
-    
-    const response = await fetch('https://planejabolso-n8n.kirvi2.easypanel.host/webhook-test/verifica-zap', {
+    // Remove caracteres não numéricos
+    const cleanPhone = phone.replace(/\D/g, '');
+
+    const response = await fetch(N8N_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${credentials}`
       },
-      body: JSON.stringify({
-        number: phoneNumber
-      })
+      body: JSON.stringify({ number: cleanPhone })
     });
 
-    if (!response.ok) {
-      throw new Error('Erro ao validar WhatsApp');
-    }
+    const data = await response.json();
+    return data; // Retorna { exists: true/false, whatsapp: "..." }
 
-    const data: WhatsAppValidationResponse = await response.json();
-    
-    return {
-      exists: data.exists === 'true',
-      whatsappId: data.exists === 'true' ? data.whatsapp : undefined
-    };
   } catch (error) {
-    console.error('Erro na validação do WhatsApp:', error);
-    throw new Error('Não foi possível validar o número do WhatsApp');
+    console.error("Erro ao validar WhatsApp:", error);
+    // Em caso de erro de conexão, deixamos passar (ou bloqueamos, você decide)
+    return { exists: false };
   }
-}
+};
