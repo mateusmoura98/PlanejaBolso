@@ -374,7 +374,13 @@ export default function Checkout() {
           });
           setStep('pix_success');
         } else {
-          navigate("/dashboard");
+          // Cartão aprovado - redireciona para login
+          // A conta será criada quando o webhook do Asaas chegar
+          navigate("/auth", { 
+            state: { 
+              message: "Pagamento aprovado! Aguarde alguns instantes e faça login com o email cadastrado. Você receberá suas credenciais por email."
+            }
+          });
         }
       } else {
         setError(data.error || "Erro ao processar pagamento");
@@ -738,8 +744,11 @@ export default function Checkout() {
                 <div className="flex flex-col items-center justify-center space-y-6 animate-in zoom-in duration-300 py-4">
                     <div className="text-center">
                         <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold text-gray-900">Pedido Criado!</h2>
+                        <h2 className="text-2xl font-bold text-gray-900">Quase lá!</h2>
                         <p className="text-gray-500">Escaneie o QR Code abaixo para pagar.</p>
+                        <p className="text-sm text-gray-400 mt-2">
+                          Após o pagamento, sua conta será criada automaticamente e você receberá as credenciais por email.
+                        </p>
                     </div>
 
                     <div className="border-4 border-green-600 p-2 rounded-xl bg-white">
@@ -766,8 +775,14 @@ export default function Checkout() {
                         </div>
                     </div>
                     
-                    <Button variant="ghost" onClick={() => navigate("/dashboard")} className="text-gray-500">
-                        Já fiz o pagamento
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 w-full">
+                      <p className="text-sm text-blue-800 text-center">
+                        💡 <strong>Dica:</strong> Mantenha esta página aberta até concluir o pagamento. Depois, faça login com o email cadastrado.
+                      </p>
+                    </div>
+                    
+                    <Button variant="ghost" onClick={() => navigate("/auth")} className="text-gray-500">
+                        Já fiz o pagamento - Ir para login
                     </Button>
                 </div>
             )}
