@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CreditCard, CheckCircle2, ArrowLeft, User, Users, Lock, QrCode, Copy, Mail, MapPin, Phone, AlertCircle, Loader2 } from 'lucide-react';
 import logo from '@/assets/planeja-bolso-logo.png';
 import { useAuth } from '@/hooks/useAuth';
+import { pixelEvents } from '@/lib/metaPixel'; // 📊 META PIXEL - Import adicionado
 
 // ============================================
 // FUNÇÕES DE VALIDAÇÃO E FORMATAÇÃO
@@ -150,6 +151,19 @@ export default function Checkout() {
       setFormData(prev => ({ ...prev, email: user.email || '' }));
     }
   }, [user]);
+
+  // 📊 META PIXEL - Evento 1: Iniciou Checkout
+  useEffect(() => {
+    const numericValue = parseFloat(selectedPlan.value.replace(',', '.'));
+    pixelEvents.initiateCheckout(selectedPlan.name, numericValue);
+  }, [selectedPlan]);
+
+  // 📊 META PIXEL - Função para rastrear seleção de método de pagamento
+  const handlePaymentMethodChange = (method: 'CREDIT_CARD' | 'PIX') => {
+    setPaymentMethod(method);
+    const numericValue = parseFloat(selectedPlan.value.replace(',', '.'));
+    pixelEvents.addPaymentInfo(method, numericValue);
+  };
 
   // ============================================
   // VALIDAÇÕES EM TEMPO REAL
@@ -360,6 +374,26 @@ export default function Checkout() {
       }
 
       if (data.success) {
+        // 📊 META PIXEL - Evento 2: CONVERSÃO! Purchase (Browser)
+        const numericValue = parseFloat(selectedPlan.value.replace(',', '.'));
+        pixelEvents.purchase(selectedPlan.name, numericValue, data.transactionId);
+        
+        // 📊 META PIXEL - Evento 3: CONVERSÃO! Purchase (Server-Side via API)
+        pixelEvents.purchaseServerSide(
+          formData.email,
+          formData.phone,
+          formData.holderName,
+          selectedPlan.name,
+          numericValue,
+          data.transactionId
+        ).then(result => {
+          if (result.success) {
+            console.log('✅ Conversão enviada para Facebook via API!');
+          } else {
+            console.warn('⚠️ Erro ao enviar conversão via API:', result.error);
+          }
+        });
+
         if (paymentMethod === 'PIX') {
           if (!data.qrCodeBase64 || !data.copyPaste) {
             setError("Erro ao gerar PIX");
@@ -503,7 +537,7 @@ export default function Checkout() {
                 <div className="grid grid-cols-2 gap-4">
                     <button
                         type="button"
-                        onClick={() => setPaymentMethod('CREDIT_CARD')}
+                        onClick={() => handlePaymentMethodChange('CREDIT_CARD')}
                         className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
                             paymentMethod === 'CREDIT_CARD' 
                             ? 'border-green-600 bg-green-50 text-green-700' 
@@ -516,7 +550,7 @@ export default function Checkout() {
 
                     <button
                         type="button"
-                        onClick={() => setPaymentMethod('PIX')}
+                        onClick={() => handlePaymentMethodChange('PIX')}
                         className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
                             paymentMethod === 'PIX' 
                             ? 'border-green-600 bg-green-50 text-green-700' 
