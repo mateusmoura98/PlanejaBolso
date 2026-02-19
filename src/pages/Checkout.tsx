@@ -11,7 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { pixelEvents } from '@/lib/metaPixel'; 
 
 // ============================================
-// FUNÇÕES DE VALIDAÇÃO E FORMATAÇÃO
+// FUNÇÕES DE VALIDAÇÃO E FORMATAÇÃO (MANTIDAS)
 // ============================================
 
 const formatCPF = (value: string) => {
@@ -24,7 +24,7 @@ const formatCPF = (value: string) => {
   }
   return numbers
     .replace(/(\d{2})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1/$2')
     .replace(/(\d{3})(\d)/, '$1/$2')
     .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
 };
@@ -102,10 +102,15 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
+  
+  // --- NOVO: Estado para controle de verificação de email ---
+  const [checkingEmail, setCheckingEmail] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
+  // ---------------------------------------------------------
 
   const [selectedPlan, setSelectedPlan] = useState({
-    name: location.state?.plan?.name || "Individual",
-    value: location.state?.plan?.value || "14,90",
+    name: location.state?.plano?.name || "Individual",
+    value: location.state?.plano?.value || "14,90",
     type: "individual"
   });
 
@@ -124,6 +129,11 @@ export default function Checkout() {
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+  // URL DO N8N (VERIFICADOR DE EMAIL)
+  const N8N_CHECK_EMAIL_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/verificar-email";
+  // URL DO N8N (PAGAMENTO)
+  const N8N_WEBHOOK_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/venda-site";
+
   useEffect(() => {
     if (user?.email) {
       setFormData(prev => ({ ...prev, email: user.email || '' }));
@@ -135,6 +145,44 @@ export default function Checkout() {
     pixelEvents.initiateCheckout(selectedPlan.name, numericValue);
   }, [selectedPlan]);
 
+  // --- NOVA FUNÇÃO: VERIFICA SE O EMAIL JÁ EXISTE AO SAIR DO CAMPO ---
+  const handleEmailBlur = async () => {
+    // Se o campo estiver vazio ou inválido, não verifica no servidor
+    if (!formData.email || !validateEmail(formData.email)) {
+        validateField('email', formData.email); // Validação local padrão
+        return;
+    }
+
+    // Se o usuário JÁ está logado com esse email, não precisa verificar (é renovação)
+    if (user?.email === formData.email) return;
+
+    setCheckingEmail(true);
+    setFormErrors(prev => { const n = {...prev}; delete n.email; return n; }); // Limpa erro anterior
+
+    try {
+        const response = await fetch(N8N_CHECK_EMAIL_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: formData.email })
+        });
+        const data = await response.json();
+
+        if (data.exists) {
+            setEmailExists(true);
+            setFormErrors(prev => ({ ...prev, email: "Este e-mail já possui cadastro! Faça login para continuar." }));
+        } else {
+            setEmailExists(false);
+        }
+    } catch (error) {
+        console.error("Erro ao verificar email", error);
+        // Em caso de erro de conexão, deixamos passar (fail-open) ou mostramos erro? 
+        // Melhor deixar passar para não travar venda se o n8n oscilar.
+    } finally {
+        setCheckingEmail(false);
+    }
+  };
+  // ------------------------------------------------------------------
+
   const validateField = (field: string, value: string): string | null => {
     switch (field) {
       case 'holderName':
@@ -143,6 +191,8 @@ export default function Checkout() {
         return null;
       case 'email':
         if (!validateEmail(value)) return 'Email inválido';
+        // Se a verificação assíncrona já detectou duplicidade, mantém o erro
+        if (emailExists && field === 'email') return "Este e-mail já possui cadastro! Faça login para continuar.";
         return null;
       case 'cpfCnpj':
         const cpfNumbers = value.replace(/\D/g, '');
@@ -194,6 +244,11 @@ export default function Checkout() {
       case 'cvv': formattedValue = value.replace(/\D/g, ''); break;
     }
     
+    // Se o usuário mudar o email, reseta o estado de "existe"
+    if (id === 'email') {
+        setEmailExists(false);
+    }
+
     setFormData(prev => ({ ...prev, [id]: formattedValue }));
     if (formErrors[id]) {
       setFormErrors(prev => {
@@ -206,17 +261,28 @@ export default function Checkout() {
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    const error = validateField(id, value);
-    if (error) setFormErrors(prev => ({ ...prev, [id]: error }));
+    
+    // Se for email, chama a função especial assíncrona
+    if (id === 'email') {
+        handleEmailBlur();
+    } else {
+        const error = validateField(id, value);
+        if (error) setFormErrors(prev => ({ ...prev, [id]: error }));
+    }
   };
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Bloqueia se o email já existe
+    if (emailExists) {
+        setFormErrors(prev => ({ ...prev, email: "Este e-mail já possui cadastro! Faça login." }));
+        return;
+    }
+
     setLoading(true);
     setError(null);
     setErrorDetails(null);
-
-    const N8N_WEBHOOK_URL = "https://planejabolso-n8n.kirvi2.easypanel.host/webhook/venda-site";
 
     try {
       const errors: Record<string, string> = {};
@@ -403,9 +469,11 @@ export default function Checkout() {
                             className={`pl-10 h-12 border-gray-300 bg-gray-50 ${formErrors.email ? 'border-red-500' : ''}`}
                             value={formData.email}
                             onChange={handleInputChange}
-                            onBlur={handleBlur}
+                            onBlur={handleBlur} // <--- CHAMADA DO N8N AQUI
                             required
                         />
+                        {/* Indicador visual de verificação */}
+                        {checkingEmail && <span className="absolute right-3 top-3.5 text-xs text-gray-400 animate-pulse">Verificando...</span>}
                     </div>
                     {formErrors.email && <p className="text-xs text-red-500 mt-1">{formErrors.email}</p>}
                 </div>
@@ -535,12 +603,21 @@ export default function Checkout() {
                 <Button 
                     type="submit" 
                     className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-700 mt-4 shadow-lg shadow-green-200 transition-all hover:scale-[1.01]"
-                    disabled={loading}
+                    disabled={loading || checkingEmail || emailExists} // BLOQUEIA SE O EMAIL EXISTIR
                 >
                     {loading ? (
                       <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Processando...</span>
+                    ) : checkingEmail ? (
+                      <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Verificando E-mail...</span>
                     ) : "Confirmar Assinatura"}
                 </Button>
+
+                <div className="flex justify-center gap-4 opacity-50 grayscale mt-4">
+                    <span className="text-xs">Visa</span>
+                    <span className="text-xs">Mastercard</span>
+                    <span className="text-xs">Elo</span>
+                    <span className="text-xs">Amex</span>
+                </div>
             </form>
         </div>
       </main>
