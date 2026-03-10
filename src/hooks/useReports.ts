@@ -23,7 +23,7 @@ export interface ReportFilters {
   endDate: string
   type: string
   categoryId: string
-  period: 'day' | 'month' | 'year' | 'custom'
+  period: 'day' | 'month' | 'year' | 'custom' | 'all' // Adicionado 'all' para prever a opção "Todos os períodos"
 }
 
 export function useReports() {
@@ -50,15 +50,46 @@ export function useReports() {
             nome
           )
         `)
-        // CORREÇÃO: Removido .eq('userid', user.id) para permitir dados da família via RLS
 
-      // Apply date filters
-      if (filters.startDate) {
-        query = query.gte('quando', filters.startDate)
+      // --- CORREÇÃO DOS FILTROS DE DATA ---
+      let queryStartDate = filters.startDate;
+      let queryEndDate = filters.endDate;
+
+      // Se não houver datas customizadas, calculamos as datas com base no período selecionado
+      if (!queryStartDate && !queryEndDate && filters.period !== 'all' && filters.period !== 'custom') {
+        const hoje = new Date();
+        
+        if (filters.period === 'day') {
+          // Início e fim do dia de hoje
+          const inicioDoDia = new Date(hoje.setHours(0, 0, 0, 0));
+          const fimDoDia = new Date(hoje.setHours(23, 59, 59, 999));
+          queryStartDate = inicioDoDia.toISOString();
+          queryEndDate = fimDoDia.toISOString();
+
+        } else if (filters.period === 'month') {
+          // Primeiro e último dia do mês atual
+          const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+          const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0, 23, 59, 59, 999);
+          queryStartDate = primeiroDia.toISOString();
+          queryEndDate = ultimoDia.toISOString();
+
+        } else if (filters.period === 'year') {
+          // Primeiro e último dia do ano atual
+          const primeiroDiaAno = new Date(hoje.getFullYear(), 0, 1);
+          const ultimoDiaAno = new Date(hoje.getFullYear(), 11, 31, 23, 59, 59, 999);
+          queryStartDate = primeiroDiaAno.toISOString();
+          queryEndDate = ultimoDiaAno.toISOString();
+        }
       }
-      if (filters.endDate) {
-        query = query.lte('quando', filters.endDate)
+
+      // Aplica as datas calculadas na query do Supabase
+      if (queryStartDate) {
+        query = query.gte('quando', queryStartDate)
       }
+      if (queryEndDate) {
+        query = query.lte('quando', queryEndDate)
+      }
+      // --- FIM DA CORREÇÃO ---
 
       // Apply type filter
       if (filters.type) {
