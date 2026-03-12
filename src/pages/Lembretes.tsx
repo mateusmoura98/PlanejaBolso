@@ -166,14 +166,29 @@ export default function Lembretes() {
     return new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
   }
 
+  // --- INÍCIO DA CORREÇÃO DE TIMEZONE ---
+  const getLocalDateAtMidnight = (dateString: string) => {
+    // Isola apenas o YYYY-MM-DD para ignorar as horas (UTC) do banco
+    const datePart = dateString.split('T')[0] 
+    const [year, month, day] = datePart.split('-')
+    // Cria a data no horário local, sempre como meia-noite
+    const localDate = new Date(Number(year), Number(month) - 1, Number(day))
+    localDate.setHours(0, 0, 0, 0)
+    return localDate
+  }
+
   const isOverdue = (dateString: string) => {
-    return new Date(dateString) < new Date()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Zera o relógio para o dia atual local
+    const reminderDate = getLocalDateAtMidnight(dateString)
+    // O lembrete só vence amanhã (quando o dia de hoje for MAIOR que o dia do lembrete)
+    return reminderDate < today 
   }
 
   const isToday = (dateString: string) => {
     const today = new Date()
-    const date = new Date(dateString)
-    return date.toDateString() === today.toDateString()
+    const reminderDate = getLocalDateAtMidnight(dateString)
+    return reminderDate.toDateString() === today.toDateString()
   }
 
   const getDateStatus = (dateString: string) => {
@@ -183,12 +198,20 @@ export default function Lembretes() {
     if (isToday(dateString)) {
       return { variant: 'default' as const, label: 'Hoje' }
     }
-    const daysDiff = Math.ceil((new Date(dateString).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-    if (daysDiff <= 7) {
+    
+    // Calcula diferença de dias local
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const reminderDate = getLocalDateAtMidnight(dateString)
+    
+    const daysDiff = Math.ceil((reminderDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    
+    if (daysDiff <= 7 && daysDiff > 0) {
       return { variant: 'secondary' as const, label: `${daysDiff} dias` }
     }
     return { variant: 'outline' as const, label: formatDate(dateString) }
   }
+  // --- FIM DA CORREÇÃO DE TIMEZONE ---
 
   return (
     <div className="space-y-6">
