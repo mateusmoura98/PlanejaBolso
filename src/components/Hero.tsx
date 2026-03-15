@@ -10,8 +10,8 @@ const Hero = () => {
         <div className="space-y-8 flex flex-col items-center">
           
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-            Gestão financeira simplificada com{" "}
-            <span className="text-primary">WhatsApp e Inteligência Artificial</span>
+            Gestão financeira no seu{" "}
+            <span className="text-primary">WhatsApp com Inteligência Artificial a partir 14.90 mês</span>
           </h1>
 
           <div className="flex items-start gap-3 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-lg text-left">
